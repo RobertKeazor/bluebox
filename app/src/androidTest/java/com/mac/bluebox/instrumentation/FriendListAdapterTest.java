@@ -1,32 +1,26 @@
-package com.mac.bluebox;
+package com.mac.bluebox.instrumentation;
 
 import android.support.annotation.NonNull;
-import android.test.AndroidTestCase;
 import android.test.InstrumentationTestCase;
 
 import com.google.inject.Guice;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Module;
-import com.mac.bluebox.bluetooth.BlueboxBluetoothAdapter;
+import com.mac.bluebox.bluetooth.BluetoothHelper;
 import com.mac.bluebox.roboguice.AppTestModule;
 
-import org.mockito.verification.VerificationMode;
+import java.util.Arrays;
 
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.mockito.internal.verification.VerificationModeFactory.times;
 
 /**
  * Created by anyer on 6/26/15.
  */
 public class FriendListAdapterTest extends InstrumentationTestCase {
     @Inject
-    BlueboxBluetoothAdapter blueboxBluetoothAdapter;
-
-    @Inject
-
+    BluetoothHelper blueboxBluetoothAdapter;
 
     @Override
     protected void tearDown() throws Exception {
@@ -46,12 +40,13 @@ public class FriendListAdapterTest extends InstrumentationTestCase {
 
     @NonNull
     private Module[] getModules() {
-        return new Module[] {new AppTestModule(mock(BlueboxBluetoothAdapter.class))};
+        return new Module[] {new AppTestModule(mock(BluetoothHelper.class))};
     }
 
-    public void testGetFriendsIsNotEmpty() {
-        blueboxBluetoothAdapter.getFriendsList();
+    public void testConnectToFriend() {
+        when(blueboxBluetoothAdapter.getOnlineDevices())
+                .thenReturn(Arrays.asList(new String[]{"0000", "1111"}));
 
-        verify(blueboxBluetoothAdapter).findFriends();
+        blueboxBluetoothAdapter.connect(blueboxBluetoothAdapter.getOnlineDevices().get(0));
     }
 }

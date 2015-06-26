@@ -10,7 +10,15 @@ android {
         targetSdkVersion 22
         versionCode 1
         versionName "1.0"
+
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
+
+    packagingOptions {
+        exclude 'LICENSE.txt'
+        exclude 'NOTICE.txt'
+    }
+
     buildTypes {
         release {
             minifyEnabled false
@@ -28,8 +36,11 @@ dependencies {
     provided 'org.roboguice:roboblender:3.+'
 
     // Mockito
-    //mockito dependencies
     androidTestCompile 'org.mockito:mockito-core:1.9.5'
     androidTestCompile files('libs/dexmaker-mockito-1.0.jar')
     androidTestCompile files('libs/dexmaker-1.0.jar')
+
+    //Espresso
+    androidTestCompile 'com.android.support.test:runner:0.3'
+    androidTestCompile 'com.android.support.test.espresso:espresso-core:2.2'
 }
