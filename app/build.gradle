@@ -26,4 +26,10 @@ dependencies {
     // Roboguice
     compile 'org.roboguice:roboguice:3.+'
     provided 'org.roboguice:roboblender:3.+'
+
+    // Mockito
+    //mockito dependencies
+    androidTestCompile 'org.mockito:mockito-core:1.9.5'
+    androidTestCompile files('libs/dexmaker-mockito-1.0.jar')
+    androidTestCompile files('libs/dexmaker-1.0.jar')
 }
