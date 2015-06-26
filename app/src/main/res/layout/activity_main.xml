@@ -9,4 +9,13 @@
         android:layout_height="wrap_content"
         android:id="@+id/textViewHello" />
 
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/editTextFriend"
+        android:layout_marginTop="173dp"
+        android:text="Hector is my friend"
+        android:layout_below="@+id/textViewHello"
+        android:layout_toEndOf="@+id/textViewHello" />
+
 </RelativeLayout>
