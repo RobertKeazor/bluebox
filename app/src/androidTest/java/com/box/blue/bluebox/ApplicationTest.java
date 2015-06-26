@@ -1,4 +1,4 @@
-package com.mac.bluebox;
+package com.box.blue.bluebox;
 
 import android.app.Application;
 import android.test.ApplicationTestCase;
