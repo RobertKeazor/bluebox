@@ -7,7 +7,7 @@ import com.google.inject.Guice;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Module;
-import com.mac.bluebox.bluetooth.BluetoothHelper;
+import com.mac.bluebox.bluetooth.BboxBluetoothService;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -17,7 +17,7 @@ import static org.mockito.Mockito.verify;
  */
 public class FriendListAdapterTest extends InstrumentationTestCase {
     @Inject
-    BluetoothHelper blueboxBluetoothAdapter;
+    BboxBluetoothService blueboxBluetoothAdapter;
 
     @Override
     protected void tearDown() throws Exception {

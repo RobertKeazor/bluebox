@@ -1,36 +1,44 @@
 package com.mac.bluebox.bluetooth;
 
-import android.app.IntentService;
 import android.app.Service;
-import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
 import android.content.Intent;
+import android.os.Binder;
 import android.os.IBinder;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
 /**
  * Created by anyer on 6/26/15.
  */
-public class BluetoothHelper extends Service {
-
+public class BboxBluetoothService extends Service {
+    private final IBinder mBinder = new LocalBinder();
     private BluetoothDevice bluetoothDevice;
 
-    public List<String> getOnlineDevices() {
-        return null;
-    }
-
-    public void discovery() {
-
+    /**
+     * Class used for the client Binder.  Because we know this service always
+     * runs in the same process as its clients, we don't need to deal with IPC.
+     */
+    public class LocalBinder extends Binder {
+        BboxBluetoothService getService() {
+            // Return this instance of LocalService so clients can call public methods
+            return BboxBluetoothService.this;
+        }
     }
 
     @Override
     public IBinder onBind(Intent intent) {
         BluetoothDevice bluetoothDevice = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-        connectToDevice(bluetoothDevice);
+
+        if(bluetoothDevice != null) {
+            connectToDevice(bluetoothDevice);
+            return mBinder;
+        }
+
         return null;
     }
 
@@ -60,6 +68,10 @@ public class BluetoothHelper extends Service {
 
     private void handleDeviceConnected(BluetoothSocket bluetoothSocket) {
         //do stuff
+    }
+
+    public List<String> getTracks(){
+        return new ArrayList<String>();
     }
 
 }
