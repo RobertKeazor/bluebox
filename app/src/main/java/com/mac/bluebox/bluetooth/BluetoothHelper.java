@@ -10,7 +10,7 @@ public class BluetoothHelper {
         return null;
     }
 
-    public void connect(String friend) {
+    public void discovery() {
 
     }
 }

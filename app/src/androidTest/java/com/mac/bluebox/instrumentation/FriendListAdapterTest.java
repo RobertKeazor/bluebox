@@ -7,6 +7,8 @@ import com.google.inject.Guice;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Module;
+import com.mac.bluebox.bluetooth.BboxBroadcastReceiver;
+import com.mac.bluebox.bluetooth.BluetoothArrayAdapter;
 import com.mac.bluebox.bluetooth.BluetoothHelper;
 import com.mac.bluebox.roboguice.AppTestModule;
 
@@ -42,13 +44,12 @@ public class FriendListAdapterTest extends InstrumentationTestCase {
 
     @NonNull
     private Module[] getModules() {
-        return new Module[] {new AppTestModule(mock(BluetoothHelper.class))};
+        return new Module[]{};
     }
 
-    public void testConnectToFriend() {
-        when(blueboxBluetoothAdapter.getOnlineDevices())
-                .thenReturn(Arrays.asList(new String[]{"0000", "1111"}));
+    public void testGetOnlineDevices() {
+        //verify(blueboxBluetoothAdapter, times(2)).discovery();
 
-        blueboxBluetoothAdapter.connect(blueboxBluetoothAdapter.getOnlineDevices().get(0));
+        //blueboxBluetoothAdapter.getOnlineDevices();
     }
 }
