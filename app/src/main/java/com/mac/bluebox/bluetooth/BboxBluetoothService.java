@@ -4,31 +4,44 @@ import android.app.Service;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
 import android.content.Intent;
-import android.os.Binder;
+import android.os.Handler;
 import android.os.IBinder;
+import android.os.Message;
+import android.os.Messenger;
+import android.widget.Toast;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
 
 /**
  * Created by anyer on 6/26/15.
  */
 public class BboxBluetoothService extends Service {
-    private final IBinder mBinder = new LocalBinder();
+    private static final int MSG_SAY_HELLO = 1;
+
     private BluetoothDevice bluetoothDevice;
 
     /**
-     * Class used for the client Binder.  Because we know this service always
-     * runs in the same process as its clients, we don't need to deal with IPC.
+     * Handler of incoming messages from clients.
      */
-    public class LocalBinder extends Binder {
-        BboxBluetoothService getService() {
-            // Return this instance of LocalService so clients can call public methods
-            return BboxBluetoothService.this;
+    class IncomingHandler extends Handler {
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what) {
+                case MSG_SAY_HELLO:
+                    Toast.makeText(getApplicationContext(), "hello!", Toast.LENGTH_SHORT).show();
+                    break;
+                default:
+                    super.handleMessage(msg);
+            }
         }
     }
+
+    /**
+     * Target we publish for clients to send messages to IncomingHandler.
+     */
+    final Messenger mMessenger = new Messenger(new IncomingHandler());
+
 
     @Override
     public IBinder onBind(Intent intent) {
@@ -36,7 +49,7 @@ public class BboxBluetoothService extends Service {
 
         if(bluetoothDevice != null) {
             connectToDevice(bluetoothDevice);
-            return mBinder;
+            return mMessenger.getBinder();
         }
 
         return null;
@@ -70,8 +83,5 @@ public class BboxBluetoothService extends Service {
         //do stuff
     }
 
-    public List<String> getTracks(){
-        return new ArrayList<String>();
-    }
 
 }
