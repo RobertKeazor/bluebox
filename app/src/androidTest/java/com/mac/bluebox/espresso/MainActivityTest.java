@@ -1,26 +1,22 @@
 package com.mac.bluebox.espresso;
 
 import android.app.Application;
-import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.support.test.espresso.Espresso;
 import android.test.ActivityInstrumentationTestCase2;
 
-import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Module;
 import com.mac.bluebox.MainActivity;
-import com.mac.bluebox.bluetooth.BboxBroadcastReceiver;
-import com.mac.bluebox.bluetooth.BluetoothArrayAdapter;
+import com.mac.bluebox.model.DeviceModel;
 import com.mac.bluebox.roboguice.AppModule;
 
 import roboguice.RoboGuice;
 
-import static android.support.test.espresso.Espresso.onData;
-import static android.support.test.espresso.action.ViewActions.click;
-import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.hamcrest.Matchers.allOf;
-import static org.hamcrest.Matchers.is;
+import static android.support.test.espresso.Espresso.onView;
+import static android.support.test.espresso.assertion.ViewAssertions.matches;
+import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
+import static android.support.test.espresso.matcher.ViewMatchers.withId;
+import static android.support.test.espresso.matcher.ViewMatchers.withText;
 
 
 /**
@@ -49,17 +45,18 @@ public class MainActivityTest extends ActivityInstrumentationTestCase2 {
     }
 
     public void testDeviceDiscoveredMustBeListed() {
+        final DeviceModel deviceModel = new DeviceModel("AAAA", "0000");
         final MainActivity activity = (MainActivity) getActivity();
         activity.runOnUiThread(
                 new Runnable() {
                     @Override
                     public void run() {
-                        activity.getBluetoothArrayAdapter().add("0000");
+                        activity.getRecyclerViewAdapter().getDevices().add(deviceModel);
+                        activity.getRecyclerViewAdapter().notifyDataSetChanged();
                     }
                 }
         );
 
-        onData(allOf(is(instanceOf(String.class)), is("0000")))
-                .perform(click());
+        onView(withText("AAAA")).check(matches(isDisplayed()));
     }
 }

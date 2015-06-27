@@ -7,17 +7,10 @@ import com.google.inject.Guice;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Module;
-import com.mac.bluebox.bluetooth.BboxBroadcastReceiver;
-import com.mac.bluebox.bluetooth.BluetoothArrayAdapter;
 import com.mac.bluebox.bluetooth.BluetoothHelper;
-import com.mac.bluebox.roboguice.AppTestModule;
-
-import java.util.Arrays;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-import static org.mockito.internal.verification.VerificationModeFactory.times;
 
 /**
  * Created by anyer on 6/26/15.

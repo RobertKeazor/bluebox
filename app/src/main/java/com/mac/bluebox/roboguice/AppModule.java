@@ -1,10 +1,10 @@
 package com.mac.bluebox.roboguice;
 
-import android.app.Application;
+import android.bluetooth.BluetoothAdapter;
 
 import com.google.inject.AbstractModule;
 import com.mac.bluebox.bluetooth.BboxBroadcastReceiver;
-import com.mac.bluebox.bluetooth.BluetoothArrayAdapter;
+import com.mac.bluebox.bluetooth.BboxRecyclerViewAdapter;
 
 /**
  * Created by anyer on 6/26/15.
@@ -12,7 +12,8 @@ import com.mac.bluebox.bluetooth.BluetoothArrayAdapter;
 public class AppModule extends AbstractModule {
     @Override
     protected void configure() {
-        bind(BluetoothArrayAdapter.class).toProvider(BluetoothArrayAdapterProvider.class);
+        bind(BluetoothAdapter.class).toProvider(BluetoothAdapterProvider.class);
+        bind(BboxRecyclerViewAdapter.class).toProvider(BboxRecyclerViewAdapterProvider.class);
         bind(BboxBroadcastReceiver.class).toProvider(BboxBroadcastReceiverProvider.class);
     }
 }

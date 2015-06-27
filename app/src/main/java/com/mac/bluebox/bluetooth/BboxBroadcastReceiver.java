@@ -6,16 +6,16 @@ import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
-import com.google.inject.Inject;
+import com.mac.bluebox.model.DeviceModel;
 
 /**
  * Created by anyer on 6/26/15.
  */
 public class BboxBroadcastReceiver extends BroadcastReceiver {
     private static final String TAG = BboxBroadcastReceiver.class.getName();
-    private BluetoothArrayAdapter adapter;
+    private BboxRecyclerViewAdapter adapter;
 
-    public BboxBroadcastReceiver(BluetoothArrayAdapter adapter) {
+    public BboxBroadcastReceiver(BboxRecyclerViewAdapter adapter) {
         this.adapter = adapter;
     }
 
@@ -29,16 +29,16 @@ public class BboxBroadcastReceiver extends BroadcastReceiver {
 
             if (device != null && device.getName() != null) {
                 // Add the name and address to an array adapter to show in a ListView
-                String deviceString = device.getName(); // + " @ " + device.getAddress();
+                DeviceModel deviceModel = new DeviceModel(device.getName(), device.getAddress());
 
-                Log.e(TAG, deviceString);
-
-                adapter.add(deviceString);
+                Log.e(TAG, deviceModel.getName() + " @ " + deviceModel.getMac());
+                adapter.getDevices().add(deviceModel);
+                adapter.notifyDataSetChanged();
             }
         }
     }
 
-    public BluetoothArrayAdapter getAdapter() {
+    public BboxRecyclerViewAdapter getAdapter() {
         return adapter;
     }
 }

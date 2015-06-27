@@ -5,43 +5,54 @@ import android.bluetooth.BluetoothDevice;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
-import android.widget.ListView;
 
 import com.google.inject.Inject;
 import com.mac.bluebox.bluetooth.BboxBroadcastReceiver;
-import com.mac.bluebox.bluetooth.BluetoothArrayAdapter;
+import com.mac.bluebox.bluetooth.BboxRecyclerViewAdapter;
+import com.mac.bluebox.view.BboxRecyclerViewWrapper;
+import com.mac.bluebox.view.SwipeRefreshLayoutWrapper;
 
 import roboguice.activity.RoboActivity;
 import roboguice.inject.ContentView;
-import roboguice.inject.InjectView;
 
 @ContentView(R.layout.activity_main)
 public class MainActivity extends RoboActivity {
-    @InjectView(R.id.listViewDevices)
-    ListView listViewDevices;
-
     @Inject
     BboxBroadcastReceiver broadcastReceiver;
+
+    @Inject
+    BluetoothAdapter bluetoothAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // Register the BroadcastReceiver
+        bluetoothAdapter.cancelDiscovery();
+
+//      Register the BroadcastReceiver
         IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
         registerReceiver(broadcastReceiver, filter); // Don't forget to unregister during onDestroy
 
-        BluetoothAdapter adapter = BluetoothAdapter.getDefaultAdapter();
-        adapter.startDiscovery();
+        new BboxRecyclerViewWrapper(this, R.id.activity_main_recyclerview, getRecyclerViewAdapter(),
+                bluetoothAdapter);
+
+        new SwipeRefreshLayoutWrapper(this, R.id.activity_main_swipe_refresh_layout,
+                getRecyclerViewAdapter(), bluetoothAdapter);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
 
-        listViewDevices.setAdapter(broadcastReceiver.getAdapter());
+        bluetoothAdapter.startDiscovery();
     }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+        bluetoothAdapter.cancelDiscovery();
+    }
 
     @Override
     protected void onDestroy() {
@@ -51,7 +62,7 @@ public class MainActivity extends RoboActivity {
     }
 
 
-    public BluetoothArrayAdapter getBluetoothArrayAdapter() {
+    public BboxRecyclerViewAdapter getRecyclerViewAdapter() {
         return broadcastReceiver.getAdapter();
     }
 
