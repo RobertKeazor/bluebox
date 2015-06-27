@@ -8,16 +8,18 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
 import android.os.Messenger;
-import android.widget.Toast;
 
 import java.io.IOException;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 /**
  * Created by anyer on 6/26/15.
  */
 public class BboxBluetoothService extends Service {
-    private static final int MSG_SAY_HELLO = 1;
+    public static final int MSG_SAY_HELLO = 1;
 
     private BluetoothDevice bluetoothDevice;
 
@@ -29,7 +31,13 @@ public class BboxBluetoothService extends Service {
         public void handleMessage(Message msg) {
             switch (msg.what) {
                 case MSG_SAY_HELLO:
-                    Toast.makeText(getApplicationContext(), "hello!", Toast.LENGTH_SHORT).show();
+                    Intent intent = new Intent(BboxDevicesBroadcastReceiver.TRACKS_LIST_DISCOVERED);
+                    List<String> tracks = new ArrayList<String>();
+
+                    tracks.add("Cancion 1");
+                    tracks.add("Cancion 2");
+                    intent.putExtra(BboxTracksBroadcastReceiver.EXTRA_TRACKS, (Serializable) tracks);
+                    sendBroadcast(intent);
                     break;
                 default:
                     super.handleMessage(msg);

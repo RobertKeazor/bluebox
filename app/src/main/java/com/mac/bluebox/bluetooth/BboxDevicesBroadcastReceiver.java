@@ -4,18 +4,19 @@ import android.bluetooth.BluetoothDevice;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.util.Log;
 
-import com.mac.bluebox.model.DeviceModel;
+import com.mac.bluebox.view.BboxDevicesRecyclerViewAdapter;
+
 
 /**
  * Created by anyer on 6/26/15.
  */
-public class BboxBroadcastReceiver extends BroadcastReceiver {
-    private static final String TAG = BboxBroadcastReceiver.class.getName();
-    private BboxRecyclerViewAdapter adapter;
+public class BboxDevicesBroadcastReceiver extends BroadcastReceiver {
+    private static final String TAG = BboxDevicesBroadcastReceiver.class.getName();
+    public static final String TRACKS_LIST_DISCOVERED = "TRACKS_LIST_DISCOVERED";
+    private BboxDevicesRecyclerViewAdapter adapter;
 
-    public BboxBroadcastReceiver(BboxRecyclerViewAdapter adapter) {
+    public BboxDevicesBroadcastReceiver(BboxDevicesRecyclerViewAdapter adapter) {
         this.adapter = adapter;
     }
 
@@ -29,16 +30,17 @@ public class BboxBroadcastReceiver extends BroadcastReceiver {
 
             if (device != null && device.getName() != null) {
                 // Add the name and address to an array adapter to show in a ListView
-                DeviceModel deviceModel = new DeviceModel(device.getName(), device.getAddress());
 
-                Log.e(TAG, deviceModel.getName() + " @ " + deviceModel.getMac());
-                adapter.getDevices().add(deviceModel);
+                adapter.getDevices().add(device);
                 adapter.notifyDataSetChanged();
             }
         }
+        if(BboxDevicesBroadcastReceiver.TRACKS_LIST_DISCOVERED.equals(action)){
+
+        }
     }
 
-    public BboxRecyclerViewAdapter getAdapter() {
+    public BboxDevicesRecyclerViewAdapter getAdapter() {
         return adapter;
     }
 }

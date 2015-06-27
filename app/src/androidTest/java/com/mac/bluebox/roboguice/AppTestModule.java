@@ -4,8 +4,8 @@ import android.content.Context;
 
 import com.google.inject.Binder;
 import com.google.inject.Module;
-import com.mac.bluebox.bluetooth.BboxBroadcastReceiver;
-import com.mac.bluebox.bluetooth.BboxRecyclerViewAdapter;
+import com.mac.bluebox.bluetooth.BboxDevicesBroadcastReceiver;
+import com.mac.bluebox.view.BboxDevicesRecyclerViewAdapter;
 
 /**
  * Created by anyer on 6/26/15.
@@ -20,8 +20,8 @@ public class AppTestModule implements Module {
     @Override
     public void configure(Binder binder) {
         binder.bind(Context.class).toInstance(context);
-        binder.bind(BboxRecyclerViewAdapter.class).toProvider(BboxRecyclerViewAdapterProvider.class);
-        binder.bind(BboxBroadcastReceiver.class)
+        binder.bind(BboxDevicesRecyclerViewAdapter.class).toProvider(BboxDevicesRecyclerViewAdapterProvider.class);
+        binder.bind(BboxDevicesBroadcastReceiver.class)
                 .toProvider(BboxBroadcastReceiverTestProvider.class);
     }
 }

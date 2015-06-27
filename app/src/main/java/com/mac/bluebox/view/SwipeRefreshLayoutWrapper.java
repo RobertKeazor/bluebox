@@ -6,7 +6,6 @@ import android.os.Handler;
 import android.support.v4.widget.SwipeRefreshLayout;
 
 import com.mac.bluebox.R;
-import com.mac.bluebox.bluetooth.BboxRecyclerViewAdapter;
 
 /**
  * Created by anyer on 6/27/15.
@@ -15,7 +14,7 @@ public class SwipeRefreshLayoutWrapper {
     private final SwipeRefreshLayout swipeRefreshLayout;
 
     public SwipeRefreshLayoutWrapper(Activity activity, int resourceId,
-                                     final BboxRecyclerViewAdapter recyclerViewAdapter,
+                                     final BboxDevicesRecyclerViewAdapter recyclerViewAdapter,
                                      final BluetoothAdapter bluetoothAdapter){
 
         swipeRefreshLayout = (SwipeRefreshLayout) activity.findViewById(resourceId);

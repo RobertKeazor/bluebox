@@ -1,54 +1,81 @@
 package com.mac.bluebox;
 
+import android.app.Activity;
+import android.bluetooth.BluetoothDevice;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.os.IBinder;
 import android.os.Message;
 import android.os.Messenger;
-import android.support.v7.app.ActionBarActivity;
+import android.os.RemoteException;
 import android.os.Bundle;
+import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import com.mac.bluebox.R;
+import com.google.inject.Inject;
 import com.mac.bluebox.bluetooth.BboxBluetoothService;
+import com.mac.bluebox.bluetooth.BboxDevicesBroadcastReceiver;
+import com.mac.bluebox.bluetooth.BboxTracksBroadcastReceiver;
+import com.mac.bluebox.view.BboxRecyclerViewWrapper;
+import com.mac.bluebox.view.BboxTracksRecyclerViewAdapter;
 
 import java.util.ArrayList;
-import java.util.List;
 
-public class DetailsActivity extends ActionBarActivity {
+import roboguice.activity.RoboActivity;
+import roboguice.inject.ContentView;
+
+@ContentView(R.layout.activity_details)
+public class DetailsActivity extends RoboActivity {
+    @Inject
+    BboxTracksBroadcastReceiver broadcastReceiver;
 
     private ServiceConnection connection;
-    private Messenger mService = null;
-    private boolean mBound = false;
+    private BboxTracksRecyclerViewAdapter recyclerViewAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_details);
+
+        //      Register the BroadcastReceiver
+        IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
+        registerReceiver(broadcastReceiver, filter); // Don't forget to unregister during onDestroy
+
+        new BboxTracksRecyclerViewAdapter(new ArrayList<String>(), this);
+        new BboxRecyclerViewWrapper(this, R.id.activity_details_recyclerview, getRecyclerViewAdapter());
+
         Intent i= new Intent(this, BboxBluetoothService.class);
         connection = new ServiceConnection() {
             @Override
             public void onServiceConnected(ComponentName name, IBinder service) {
-                mService = new Messenger(service);
-                mBound = true;
-                fillList();
+                requestRetrieveTracks(new Messenger(service));
             }
 
             @Override
             public void onServiceDisconnected(ComponentName name) {
-                mService = null;
-                mBound = false;
+
             }
         };
         this.bindService(i, connection, Context.BIND_AUTO_CREATE);
     }
 
-    private void fillList() {
-        //Message msg =  Message.obtain(null, BboxBluetoothService.MS)
+    public RecyclerView.Adapter getRecyclerViewAdapter() {
+        return recyclerViewAdapter;
     }
+
+
+    private void requestRetrieveTracks(Messenger service) {
+        Message msg =  Message.obtain(null, BboxBluetoothService.MSG_SAY_HELLO);
+        try {
+            service.send(msg);
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+    }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

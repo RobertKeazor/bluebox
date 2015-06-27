@@ -7,8 +7,8 @@ import android.content.IntentFilter;
 import android.os.Bundle;
 
 import com.google.inject.Inject;
-import com.mac.bluebox.bluetooth.BboxBroadcastReceiver;
-import com.mac.bluebox.bluetooth.BboxRecyclerViewAdapter;
+import com.mac.bluebox.bluetooth.BboxDevicesBroadcastReceiver;
+import com.mac.bluebox.view.BboxDevicesRecyclerViewAdapter;
 import com.mac.bluebox.view.BboxRecyclerViewWrapper;
 import com.mac.bluebox.view.SwipeRefreshLayoutWrapper;
 
@@ -18,7 +18,7 @@ import roboguice.inject.ContentView;
 @ContentView(R.layout.activity_main)
 public class MainActivity extends RoboActivity {
     @Inject
-    BboxBroadcastReceiver broadcastReceiver;
+    BboxDevicesBroadcastReceiver broadcastReceiver;
 
     @Inject
     BluetoothAdapter bluetoothAdapter;
@@ -33,8 +33,7 @@ public class MainActivity extends RoboActivity {
         IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
         registerReceiver(broadcastReceiver, filter); // Don't forget to unregister during onDestroy
 
-        new BboxRecyclerViewWrapper(this, R.id.activity_main_recyclerview, getRecyclerViewAdapter(),
-                bluetoothAdapter);
+        new BboxRecyclerViewWrapper(this, R.id.activity_main_recyclerview, getRecyclerViewAdapter());
 
         new SwipeRefreshLayoutWrapper(this, R.id.activity_main_swipe_refresh_layout,
                 getRecyclerViewAdapter(), bluetoothAdapter);
@@ -62,7 +61,7 @@ public class MainActivity extends RoboActivity {
     }
 
 
-    public BboxRecyclerViewAdapter getRecyclerViewAdapter() {
+    public BboxDevicesRecyclerViewAdapter getRecyclerViewAdapter() {
         return broadcastReceiver.getAdapter();
     }
 
