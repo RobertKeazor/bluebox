@@ -25,7 +25,7 @@ public class DetailsActivity extends RoboActivity {
     @Inject
     BboxTracksBroadcastReceiver broadcastReceiver;
 
-    private ServiceConnection connection;
+    private ServiceConnection serviceConnection;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,7 +38,7 @@ public class DetailsActivity extends RoboActivity {
         new BboxRecyclerViewWrapper(this, R.id.activity_details_recyclerview, getRecyclerViewAdapter());
 
         Intent i= new Intent(this, BboxBluetoothService.class);
-        connection = new ServiceConnection() {
+        serviceConnection = new ServiceConnection() {
             @Override
             public void onServiceConnected(ComponentName name, IBinder service) {
                 requestRetrieveTracks(new Messenger(service));
@@ -50,7 +50,7 @@ public class DetailsActivity extends RoboActivity {
             }
         };
 
-        this.bindService(i, connection, Context.BIND_AUTO_CREATE);
+        this.bindService(i, serviceConnection, Context.BIND_AUTO_CREATE);
     }
 
     public RecyclerView.Adapter getRecyclerViewAdapter() {
@@ -67,6 +67,13 @@ public class DetailsActivity extends RoboActivity {
         }
     }
 
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+
+        unbindService(serviceConnection);
+    }
 
     @Override
     protected void onDestroy() {

@@ -84,7 +84,9 @@ public class BboxBluetoothService extends RoboService {
         public void handleMessage(Message msg) {
             switch (msg.what) {
                 case REQUEST_TRACK:
-                    // Create a BT request for track.
+                    BluetoothDevice device = (BluetoothDevice) msg.obj;
+                    new ConnectThread(device, bluetoothAdapter, mHandler).start();
+                    Log.e(TAG, "Trying to connect ...");
                     break;
 
                 case CONNECT_AS_SERVER:

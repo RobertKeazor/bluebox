@@ -5,14 +5,12 @@ import android.bluetooth.BluetoothDevice;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.os.Message;
 import android.os.Messenger;
 import android.os.RemoteException;
-import android.util.Log;
 
 import com.google.inject.Inject;
 import com.mac.bluebox.bluetooth.BboxBluetoothService;
@@ -36,6 +34,7 @@ public class MainActivity extends RoboActivity {
 
     @Inject
     BluetoothAdapter bluetoothAdapter;
+    private ServiceConnection serviceConnection;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,37 +45,25 @@ public class MainActivity extends RoboActivity {
             startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
         }
 
-        bluetoothAdapter.cancelDiscovery();
-
         Intent intent= new Intent(this, BboxBluetoothService.class);
-        ServiceConnection connection = new ServiceConnection() {
+        serviceConnection = new ServiceConnection() {
             @Override
             public void onServiceConnected(ComponentName name, IBinder service) {
                 turnBluetoothAsServer(new Messenger(service));
             }
 
             @Override
-            public void onServiceDisconnected(ComponentName name) {
-
-            }
+            public void onServiceDisconnected(ComponentName name) {}
         };
 
-        Log.i(TAG, "Binding to the service ....");
-        bindService(intent, connection, Context.BIND_AUTO_CREATE);
+        bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE);
 
         Set<BluetoothDevice> pairedDevices = bluetoothAdapter.getBondedDevices();
-        // If there are paired devices
         if (pairedDevices.size() > 0) {
-            // Loop through paired devices
             for (BluetoothDevice device : pairedDevices) {
-                // Add the name and address to an array adapter to show in a ListView
                 getRecyclerViewAdapter().getDevices().add(device);
             }
         }
-
-//      Register the BroadcastReceiver
-//        IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
-//        registerReceiver(broadcastReceiver, filter); // Don't forget to unregister during onDestroy
 
         new BboxRecyclerViewWrapper(this, R.id.activity_main_recyclerview, getRecyclerViewAdapter());
 
@@ -96,34 +83,16 @@ public class MainActivity extends RoboActivity {
     @Override
     protected void onResume() {
         super.onResume();
-
-        bluetoothAdapter.startDiscovery();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
 
-        bluetoothAdapter.cancelDiscovery();
+        unbindService(serviceConnection);
     }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-
-        unregisterReceiver(broadcastReceiver);
-    }
-
 
     public BboxDevicesRecyclerViewAdapter getRecyclerViewAdapter() {
         return broadcastReceiver.getAdapter();
-    }
-
-
-    private void startDiscoveringDevices() {
-        Intent discoverableIntent = new
-                Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
-        discoverableIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, 300);
-        startActivity(discoverableIntent);
     }
 }
