@@ -34,10 +34,9 @@ public class BboxTracksBroadcastReceiver extends BroadcastReceiver {
 
         Log.e(TAG, "Broadcast Action Received: " + action);
         if(BboxTracksBroadcastReceiver.TRACKS_LIST_DISCOVERED.equals(action)){
-            //String data = (String) intent.getExtras().get(BboxTracksBroadcastReceiver.EXTRA_TRACKS);
-            //String[] tracks = data.split(",");
+            String data = (String) intent.getExtras().get(BboxTracksBroadcastReceiver.EXTRA_TRACKS);
+            String[] tracks = data.split(",");
 
-            String[] tracks = (String[]) intent.getExtras().get(BboxTracksBroadcastReceiver.EXTRA_TRACKS);
             adapter.getTracks().addAll(Arrays.asList(tracks));
             adapter.notifyDataSetChanged();
             Log.e(TAG, "DataSetChanged Items: " + tracks.length);

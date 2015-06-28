@@ -54,8 +54,7 @@ public class BboxBluetoothService extends RoboService {
 
                     Intent intent = new Intent();
                     intent.setAction(BboxTracksBroadcastReceiver.TRACKS_LIST_DISCOVERED);
-                    List<String> tracks = ArrayHelper.convertBytesToListOfString(bytes);
-                    intent.putExtra(BboxTracksBroadcastReceiver.EXTRA_TRACKS, (String[])tracks.toArray());
+                    intent.putExtra(BboxTracksBroadcastReceiver.EXTRA_TRACKS, new String(bytes));
                     sendBroadcast(intent);
 
                     break;
@@ -64,11 +63,8 @@ public class BboxBluetoothService extends RoboService {
                     ConnectedThread clientSocket = (ConnectedThread) msg.obj;
                     clientSocket.start();
 
-                    List<String> sdcarTracks = new ArrayList<String>();
-                    sdcarTracks.add("Cancion 1");
-                    sdcarTracks.add("Cancion 2");
-
-                    clientSocket.write(ArrayHelper.convertListToArrayOfBytes(sdcarTracks));
+                    String tracksList = "Track #1, Track #2, Track #3";
+                    clientSocket.write(tracksList.getBytes());
                     break;
             }
         }
