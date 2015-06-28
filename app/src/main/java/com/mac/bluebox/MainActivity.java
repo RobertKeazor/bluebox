@@ -21,6 +21,8 @@ import com.mac.bluebox.view.BboxDevicesRecyclerViewAdapter;
 import com.mac.bluebox.view.BboxRecyclerViewWrapper;
 import com.mac.bluebox.view.SwipeRefreshLayoutWrapper;
 
+import java.util.Set;
+
 import roboguice.activity.RoboActivity;
 import roboguice.inject.ContentView;
 
@@ -62,9 +64,19 @@ public class MainActivity extends RoboActivity {
         Log.i(TAG, "Binding to the service ....");
         bindService(intent, connection, Context.BIND_AUTO_CREATE);
 
+        Set<BluetoothDevice> pairedDevices = bluetoothAdapter.getBondedDevices();
+        // If there are paired devices
+        if (pairedDevices.size() > 0) {
+            // Loop through paired devices
+            for (BluetoothDevice device : pairedDevices) {
+                // Add the name and address to an array adapter to show in a ListView
+                getRecyclerViewAdapter().getDevices().add(device);
+            }
+        }
+
 //      Register the BroadcastReceiver
-        IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
-        registerReceiver(broadcastReceiver, filter); // Don't forget to unregister during onDestroy
+//        IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
+//        registerReceiver(broadcastReceiver, filter); // Don't forget to unregister during onDestroy
 
         new BboxRecyclerViewWrapper(this, R.id.activity_main_recyclerview, getRecyclerViewAdapter());
 

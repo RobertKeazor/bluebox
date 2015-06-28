@@ -73,6 +73,8 @@ public class BboxBluetoothService extends RoboService {
         }
     };
 
+    private AcceptThread acceptThread;
+
 
     /**
      * Handler of incoming messages from clients.
@@ -86,7 +88,8 @@ public class BboxBluetoothService extends RoboService {
                     break;
 
                 case CONNECT_AS_SERVER:
-                    new AcceptThread(bluetoothAdapter, mHandler).start();
+                    acceptThread = new AcceptThread(bluetoothAdapter, mHandler);
+                    acceptThread.start();
 
                     Log.e(TAG, "Server Started ....");
                     break;
