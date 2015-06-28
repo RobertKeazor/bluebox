@@ -29,28 +29,15 @@ public class ArrayHelper {
         return baos.toByteArray();
     }
 
-    public static List<String> convertBytesToListOfString(byte[] bytes) {
-        ByteArrayInputStream bais = new ByteArrayInputStream(bytes);
-        ObjectInputStream ois = null;
 
-        try {
-            ois = new ObjectInputStream(bais);
-            List<String> arrayList = (List<String>) ois.readObject();
-            ois.close();
+    public static String joinStringByComma(List<String> list){
+        String join = "";
 
-            return arrayList;
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        } finally {
-            try {
-                if (ois != null) {
-                    ois.close();
-                }
-            } catch (IOException ex) {
-                ex.printStackTrace();
-            }
+        for (String item: list) {
+            join += item + ",";
         }
 
-        return null;
+        join = join.substring(0, join.length() - 1);
+        return join;
     }
 }

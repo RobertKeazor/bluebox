@@ -3,15 +3,22 @@ package com.mac.bluebox.bluetooth;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
+import android.content.ContentResolver;
+import android.content.CursorLoader;
 import android.content.Intent;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
 import android.os.Messenger;
+import android.provider.MediaStore;
 import android.util.Log;
 
 import com.google.inject.Inject;
 import com.mac.bluebox.ArrayHelper;
+
+import org.apache.commons.lang.StringUtils;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -63,8 +70,10 @@ public class BboxBluetoothService extends RoboService {
                     ConnectedThread clientSocket = (ConnectedThread) msg.obj;
                     clientSocket.start();
 
-                    String tracksList = "Track #1, Track #2, Track #3";
-                    clientSocket.write(tracksList.getBytes());
+                    List<String> musicFiles = readMusicFiles();
+                    String join = ArrayHelper.joinStringByComma(musicFiles);
+                    //String tracksList = "Track #1, Track #2, Track #3";
+                    clientSocket.write(join.getBytes());
                     break;
             }
         }
@@ -117,8 +126,31 @@ public class BboxBluetoothService extends RoboService {
         return mMessenger.getBinder();
     }
 
-    private void handleDeviceConnected(BluetoothSocket bluetoothSocket) {
-        //do stuff
+    private List<String> readMusicFiles() {
+        ContentResolver cr = getApplicationContext().getContentResolver();
+        Uri uri = MediaStore.Files.getContentUri("external");
+
+        // every column, although that is huge waste, you probably need
+        // BaseColumns.DATA (the path) only.
+        String[] projection = null;
+
+        // exclude media files, they would be here also.
+        String selection = MediaStore.Files.FileColumns.MEDIA_TYPE + "="
+                + MediaStore.Files.FileColumns.MEDIA_TYPE_AUDIO;
+        String[] selectionArgs = null; // there is no ? in selection so null here
+
+        String sortOrder = null; // unordered
+        Cursor audioFiles = cr.query(uri, projection, selection, selectionArgs, sortOrder);
+
+        ArrayList<String> tracks = new ArrayList<String>();
+        while (audioFiles.moveToNext()) {
+            String trackName = audioFiles.getString(audioFiles.getColumnIndex(
+                    MediaStore.Files.FileColumns.DISPLAY_NAME));
+
+            tracks.add(trackName);
+        }
+
+        return tracks;
     }
 
 
