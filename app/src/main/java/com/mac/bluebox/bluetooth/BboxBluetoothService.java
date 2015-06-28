@@ -54,7 +54,8 @@ public class BboxBluetoothService extends RoboService {
 
                     Intent intent = new Intent();
                     intent.setAction(BboxTracksBroadcastReceiver.TRACKS_LIST_DISCOVERED);
-                    intent.putExtra(BboxTracksBroadcastReceiver.EXTRA_TRACKS, new String(bytes));
+                    List<String> tracks = ArrayHelper.convertBytesToListOfString(bytes);
+                    intent.putExtra(BboxTracksBroadcastReceiver.EXTRA_TRACKS, (String[])tracks.toArray());
                     sendBroadcast(intent);
 
                     break;
