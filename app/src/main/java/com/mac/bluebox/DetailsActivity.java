@@ -1,7 +1,5 @@
 package com.mac.bluebox;
 
-import android.app.Activity;
-import android.bluetooth.BluetoothDevice;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -13,17 +11,11 @@ import android.os.Messenger;
 import android.os.RemoteException;
 import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
-import android.view.Menu;
-import android.view.MenuItem;
 
 import com.google.inject.Inject;
 import com.mac.bluebox.bluetooth.BboxBluetoothService;
-import com.mac.bluebox.bluetooth.BboxDevicesBroadcastReceiver;
 import com.mac.bluebox.bluetooth.BboxTracksBroadcastReceiver;
 import com.mac.bluebox.view.BboxRecyclerViewWrapper;
-import com.mac.bluebox.view.BboxTracksRecyclerViewAdapter;
-
-import java.util.ArrayList;
 
 import roboguice.activity.RoboActivity;
 import roboguice.inject.ContentView;
@@ -34,17 +26,15 @@ public class DetailsActivity extends RoboActivity {
     BboxTracksBroadcastReceiver broadcastReceiver;
 
     private ServiceConnection connection;
-    private BboxTracksRecyclerViewAdapter recyclerViewAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        //      Register the BroadcastReceiver
-        IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
+        // Register the BroadcastReceiver
+        IntentFilter filter = new IntentFilter(BboxTracksBroadcastReceiver.TRACKS_LIST_DISCOVERED);
         registerReceiver(broadcastReceiver, filter); // Don't forget to unregister during onDestroy
 
-        new BboxTracksRecyclerViewAdapter(new ArrayList<String>(), this);
         new BboxRecyclerViewWrapper(this, R.id.activity_details_recyclerview, getRecyclerViewAdapter());
 
         Intent i= new Intent(this, BboxBluetoothService.class);
@@ -59,16 +49,17 @@ public class DetailsActivity extends RoboActivity {
 
             }
         };
+
         this.bindService(i, connection, Context.BIND_AUTO_CREATE);
     }
 
     public RecyclerView.Adapter getRecyclerViewAdapter() {
-        return recyclerViewAdapter;
+        return broadcastReceiver.getAdapter();
     }
 
 
     private void requestRetrieveTracks(Messenger service) {
-        Message msg =  Message.obtain(null, BboxBluetoothService.MSG_SAY_HELLO);
+        Message msg =  Message.obtain(null, BboxBluetoothService.REQUEST_TRACK);
         try {
             service.send(msg);
         } catch (RemoteException e) {
@@ -78,24 +69,9 @@ public class DetailsActivity extends RoboActivity {
 
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_details, menu);
-        return true;
-    }
+    protected void onDestroy() {
+        super.onDestroy();
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
+        unregisterReceiver(broadcastReceiver);
     }
 }

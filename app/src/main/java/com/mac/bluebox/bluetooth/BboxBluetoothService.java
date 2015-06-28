@@ -1,6 +1,6 @@
 package com.mac.bluebox.bluetooth;
 
-import android.app.Service;
+import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
 import android.content.Intent;
@@ -8,20 +8,71 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
 import android.os.Messenger;
+import android.util.Log;
 
-import java.io.IOException;
+import com.google.inject.Inject;
+import com.mac.bluebox.ArrayHelper;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
+
+import roboguice.service.RoboService;
 
 /**
  * Created by anyer on 6/26/15.
  */
-public class BboxBluetoothService extends Service {
-    public static final int MSG_SAY_HELLO = 1;
+public class BboxBluetoothService extends RoboService {
+    public static final int CLIENT_SERVER_PAIRED = 1;
+    public static final int SOCKET_MESSAGE_READ = 2;
+    public static final int CONNECT_AS_SERVER = 3;
+    public static final int SERVER_CLIENT_PAIRED = 4;
+
+    @Inject
+    BluetoothAdapter bluetoothAdapter;
+
+    public static final int REQUEST_TRACK = 1;
+    private static final String TAG = BboxBluetoothService.class.getName();
 
     private BluetoothDevice bluetoothDevice;
+
+    private Handler mHandler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+
+            switch (msg.what) {
+                case BboxBluetoothService.CLIENT_SERVER_PAIRED:
+                    ConnectedThread socket = (ConnectedThread) msg.obj;
+
+                    socket.start();
+                    break;
+
+                case BboxBluetoothService.SOCKET_MESSAGE_READ:
+                    List<String> tracks = new ArrayList<String>();
+                    tracks.add((String) msg.obj);
+
+                    Intent intent = new Intent();
+                    intent.setAction(BboxTracksBroadcastReceiver.TRACKS_LIST_DISCOVERED);
+                    intent.putExtra(BboxTracksBroadcastReceiver.EXTRA_TRACKS, (Serializable) tracks);
+                    sendBroadcast(intent);
+
+                    break;
+
+                case BboxBluetoothService.SERVER_CLIENT_PAIRED:
+                    ConnectedThread clientSocket = (ConnectedThread) msg.obj;
+                    clientSocket.start();
+
+                    List<String> sdcarTracks = new ArrayList<String>();
+                    sdcarTracks.add("Cancion 1");
+                    sdcarTracks.add("Cancion 2");
+
+                    clientSocket.write(ArrayHelper.convertListToArrayOfBytes(sdcarTracks));
+                    break;
+            }
+        }
+    };
+
 
     /**
      * Handler of incoming messages from clients.
@@ -30,15 +81,17 @@ public class BboxBluetoothService extends Service {
         @Override
         public void handleMessage(Message msg) {
             switch (msg.what) {
-                case MSG_SAY_HELLO:
-                    Intent intent = new Intent(BboxDevicesBroadcastReceiver.TRACKS_LIST_DISCOVERED);
-                    List<String> tracks = new ArrayList<String>();
-
-                    tracks.add("Cancion 1");
-                    tracks.add("Cancion 2");
-                    intent.putExtra(BboxTracksBroadcastReceiver.EXTRA_TRACKS, (Serializable) tracks);
-                    sendBroadcast(intent);
+                case REQUEST_TRACK:
+                    // Create a BT request for track.
                     break;
+
+                case CONNECT_AS_SERVER:
+                    new AcceptThread(bluetoothAdapter, mHandler).start();
+
+                    Log.e(TAG, "Server Started ....");
+                    break;
+
+
                 default:
                     super.handleMessage(msg);
             }
@@ -56,35 +109,14 @@ public class BboxBluetoothService extends Service {
         BluetoothDevice bluetoothDevice = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
 
         if(bluetoothDevice != null) {
-            connectToDevice(bluetoothDevice);
+            new ConnectThread(bluetoothDevice, bluetoothAdapter, mHandler);
             return mMessenger.getBinder();
         }
 
         return null;
-    }
 
-    private void connectToDevice(BluetoothDevice bluetoothDevice) {
-        BluetoothSocket bluetoothSocket = null;
-        UUID blueBoxUuid = new UUID(1000001, 100000001);
-        try {
-            bluetoothSocket = bluetoothDevice.createRfcommSocketToServiceRecord(blueBoxUuid);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        try {
-            // Connect the device through the socket. This will block
-            // until it succeeds or throws an exception
-            bluetoothSocket.connect();
-        } catch (IOException connectException) {
-            // Unable to connect; close the socket and get out
-            try {
-                bluetoothSocket.close();
-            } catch (IOException closeException) { }
-            return;
-        }
-
-        // Do work to manage the connection (in a separate thread)
-        handleDeviceConnected(bluetoothSocket);
+//        Log.e(TAG, "Service binded");
+//        return mMessenger.getBinder();
     }
 
     private void handleDeviceConnected(BluetoothSocket bluetoothSocket) {

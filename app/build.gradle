@@ -31,6 +31,9 @@ dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     compile 'com.android.support:appcompat-v7:22.2.0'
 
+    // Guava
+    compile group: 'com.google.guava', name: 'guava', version: '15.0'
+
     // CardView
     compile 'com.android.support:cardview-v7:22.0.+'
 

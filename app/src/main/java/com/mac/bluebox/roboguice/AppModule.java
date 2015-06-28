@@ -15,6 +15,7 @@ public class AppModule extends AbstractModule {
     @Override
     protected void configure() {
         bind(BluetoothAdapter.class).toProvider(BluetoothAdapterProvider.class);
+
         bind(BboxDevicesRecyclerViewAdapter.class).toProvider(BboxDevicesRecyclerViewAdapterProvider.class);
         bind(BboxDevicesBroadcastReceiver.class).toProvider(BboxDevicesBroadcastReceiverProvider.class);
 

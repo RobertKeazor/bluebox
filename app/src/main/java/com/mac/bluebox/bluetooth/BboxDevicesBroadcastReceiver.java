@@ -13,7 +13,6 @@ import com.mac.bluebox.view.BboxDevicesRecyclerViewAdapter;
  */
 public class BboxDevicesBroadcastReceiver extends BroadcastReceiver {
     private static final String TAG = BboxDevicesBroadcastReceiver.class.getName();
-    public static final String TRACKS_LIST_DISCOVERED = "TRACKS_LIST_DISCOVERED";
     private BboxDevicesRecyclerViewAdapter adapter;
 
     public BboxDevicesBroadcastReceiver(BboxDevicesRecyclerViewAdapter adapter) {
@@ -34,9 +33,6 @@ public class BboxDevicesBroadcastReceiver extends BroadcastReceiver {
                 adapter.getDevices().add(device);
                 adapter.notifyDataSetChanged();
             }
-        }
-        if(BboxDevicesBroadcastReceiver.TRACKS_LIST_DISCOVERED.equals(action)){
-
         }
     }
 

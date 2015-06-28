@@ -13,11 +13,11 @@ import com.mac.bluebox.R;
 public class BboxRecyclerViewWrapper {
     private RecyclerView view;
 
-    public BboxRecyclerViewWrapper(Activity activity, int resourceId,  RecyclerView.Adapter bboxDevicesRecyclerViewAdapter) {
-
+    public BboxRecyclerViewWrapper(Activity activity, int resourceId,
+                                   RecyclerView.Adapter recyclerViewAdapter) {
         view = (RecyclerView) activity.findViewById(resourceId);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(activity);
         view.setLayoutManager(linearLayoutManager);
-        view.setAdapter(bboxDevicesRecyclerViewAdapter);
+        view.setAdapter(recyclerViewAdapter);
     }
 }
