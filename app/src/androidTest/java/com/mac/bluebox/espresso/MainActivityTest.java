@@ -7,7 +7,6 @@ import android.test.ActivityInstrumentationTestCase2;
 import com.google.inject.Injector;
 import com.google.inject.Module;
 import com.mac.bluebox.MainActivity;
-import com.mac.bluebox.model.DeviceModel;
 import com.mac.bluebox.roboguice.AppModule;
 
 import roboguice.RoboGuice;
@@ -44,19 +43,19 @@ public class MainActivityTest extends ActivityInstrumentationTestCase2 {
         return new AppModule();
     }
 
-    public void testDeviceDiscoveredMustBeListed() {
-        final DeviceModel deviceModel = new DeviceModel("AAAA", "0000");
-        final MainActivity activity = (MainActivity) getActivity();
-        activity.runOnUiThread(
-                new Runnable() {
-                    @Override
-                    public void run() {
-                        activity.getRecyclerViewAdapter().getDevices().add(deviceModel);
-                        activity.getRecyclerViewAdapter().notifyDataSetChanged();
-                    }
-                }
-        );
-
-        onView(withText("AAAA")).check(matches(isDisplayed()));
-    }
+//    public void testDeviceDiscoveredMustBeListed() {
+//        final DeviceModel deviceModel = new DeviceModel("AAAA", "0000");
+//        final MainActivity activity = (MainActivity) getActivity();
+//        activity.runOnUiThread(
+//                new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        activity.getRecyclerViewAdapter().getDevices().add(deviceModel);
+//                        activity.getRecyclerViewAdapter().notifyDataSetChanged();
+//                    }
+//                }
+//        );
+//
+//        onView(withText("AAAA")).check(matches(isDisplayed()));
+//    }
 }

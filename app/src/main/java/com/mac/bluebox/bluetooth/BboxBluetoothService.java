@@ -110,13 +110,9 @@ public class BboxBluetoothService extends RoboService {
 
         if(bluetoothDevice != null) {
             new ConnectThread(bluetoothDevice, bluetoothAdapter, mHandler);
-            return mMessenger.getBinder();
         }
 
-        return null;
-
-//        Log.e(TAG, "Service binded");
-//        return mMessenger.getBinder();
+        return mMessenger.getBinder();
     }
 
     private void handleDeviceConnected(BluetoothSocket bluetoothSocket) {

@@ -12,6 +12,7 @@ import android.os.IBinder;
 import android.os.Message;
 import android.os.Messenger;
 import android.os.RemoteException;
+import android.util.Log;
 
 import com.google.inject.Inject;
 import com.mac.bluebox.bluetooth.BboxBluetoothService;
@@ -26,6 +27,7 @@ import roboguice.inject.ContentView;
 @ContentView(R.layout.activity_main)
 public class MainActivity extends RoboActivity {
     private static final int REQUEST_ENABLE_BT = 1;
+    private static final String TAG = MainActivity.class.getName();
 
     @Inject
     BboxDevicesBroadcastReceiver broadcastReceiver;
@@ -57,6 +59,7 @@ public class MainActivity extends RoboActivity {
             }
         };
 
+        Log.i(TAG, "Binding to the service ....");
         bindService(intent, connection, Context.BIND_AUTO_CREATE);
 
 //      Register the BroadcastReceiver
