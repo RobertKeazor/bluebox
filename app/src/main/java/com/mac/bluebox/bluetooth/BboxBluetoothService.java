@@ -15,6 +15,7 @@ import com.mac.bluebox.ArrayHelper;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import roboguice.service.RoboService;
@@ -49,12 +50,11 @@ public class BboxBluetoothService extends RoboService {
                     break;
 
                 case BboxBluetoothService.SOCKET_MESSAGE_READ:
-                    List<String> tracks = new ArrayList<String>();
-                    tracks.add((String) msg.obj);
+                    byte[] bytes = (byte[]) msg.obj;
 
                     Intent intent = new Intent();
                     intent.setAction(BboxTracksBroadcastReceiver.TRACKS_LIST_DISCOVERED);
-                    intent.putExtra(BboxTracksBroadcastReceiver.EXTRA_TRACKS, (Serializable) tracks);
+                    intent.putExtra(BboxTracksBroadcastReceiver.EXTRA_TRACKS, new String(bytes));
                     sendBroadcast(intent);
 
                     break;

@@ -11,6 +11,7 @@ import android.os.IBinder;
 import android.os.Message;
 import android.os.Messenger;
 import android.os.RemoteException;
+import android.util.Log;
 
 import com.google.inject.Inject;
 import com.mac.bluebox.bluetooth.BboxBluetoothService;
@@ -62,6 +63,8 @@ public class MainActivity extends RoboActivity {
         if (pairedDevices.size() > 0) {
             for (BluetoothDevice device : pairedDevices) {
                 getRecyclerViewAdapter().getDevices().add(device);
+                getRecyclerViewAdapter().notifyDataSetChanged();
+                Log.e(TAG, "PAIRED DEVICE NAME: " + device.getName());
             }
         }
 

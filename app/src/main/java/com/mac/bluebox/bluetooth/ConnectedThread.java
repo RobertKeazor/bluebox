@@ -2,6 +2,7 @@ package com.mac.bluebox.bluetooth;
 
 import android.bluetooth.BluetoothSocket;
 import android.os.Handler;
+import android.util.Log;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -11,6 +12,7 @@ import java.io.OutputStream;
  * Created by anyer on 6/27/15.
  */
 public class ConnectedThread extends Thread {
+    private static final String TAG = ConnectedThread.class.getName();
     private final BluetoothSocket mmSocket;
     private final InputStream mmInStream;
     private final OutputStream mmOutStream;
@@ -34,6 +36,7 @@ public class ConnectedThread extends Thread {
     }
 
     public void run() {
+        Log.e(TAG, "Connected Socket");
         byte[] buffer = new byte[1024];  // buffer store for the stream
         int bytes; // bytes returned from read()
 

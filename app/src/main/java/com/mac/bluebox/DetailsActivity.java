@@ -1,5 +1,7 @@
 package com.mac.bluebox;
 
+import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -60,6 +62,7 @@ public class DetailsActivity extends RoboActivity {
 
     private void requestRetrieveTracks(Messenger service) {
         Message msg =  Message.obtain(null, BboxBluetoothService.REQUEST_TRACK);
+        msg.obj = getIntent().getExtras().get(BluetoothDevice.EXTRA_DEVICE);
         try {
             service.send(msg);
         } catch (RemoteException e) {

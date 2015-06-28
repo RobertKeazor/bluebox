@@ -10,6 +10,7 @@ import com.mac.bluebox.view.BboxDevicesRecyclerViewAdapter;
 import com.mac.bluebox.view.BboxTracksRecyclerViewAdapter;
 
 import java.io.Serializable;
+import java.util.Arrays;
 import java.util.List;
 
 
@@ -33,10 +34,11 @@ public class BboxTracksBroadcastReceiver extends BroadcastReceiver {
 
         Log.e(TAG, "Broadcast Action Received: " + action);
         if(BboxTracksBroadcastReceiver.TRACKS_LIST_DISCOVERED.equals(action)){
-            List<String> tracks = (List<String>) intent.getSerializableExtra(BboxTracksBroadcastReceiver.EXTRA_TRACKS);
-            adapter.getTracks().addAll(tracks);
+            String data = (String) intent.getExtras().get(BboxTracksBroadcastReceiver.EXTRA_TRACKS);
+            String[] tracks = data.split(",");
+            adapter.getTracks().addAll(Arrays.asList(tracks));
             adapter.notifyDataSetChanged();
-            Log.e(TAG, "DataSetChanged Items: " + tracks.size());
+            Log.e(TAG, "DataSetChanged Items: " + tracks.length);
         }
     }
 
