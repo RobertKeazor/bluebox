@@ -2,7 +2,6 @@ package com.mac.bluebox.bluetooth;
 
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
-import android.bluetooth.BluetoothGatt;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
@@ -16,7 +15,6 @@ import android.util.Log;
 import com.google.inject.Inject;
 import com.mac.bluebox.ArrayHelper;
 
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 

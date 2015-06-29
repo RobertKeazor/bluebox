@@ -39,7 +39,6 @@ public class BboxBluetoothService extends RoboService {
     public void onCreate() {
         super.onCreate();
 
-        //mMessenger = new Messenger(new IncommingMessagesHandler(this, mBluetoothAdapter));
         mMessenger = new Messenger(incommingMessagesHandler);
     }
 

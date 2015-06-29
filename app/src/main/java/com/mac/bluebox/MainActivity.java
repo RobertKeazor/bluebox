@@ -1,11 +1,9 @@
 package com.mac.bluebox;
 
 import android.bluetooth.BluetoothAdapter;
-import android.bluetooth.BluetoothDevice;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 
 import com.google.inject.Inject;
 import com.mac.bluebox.bluetooth.BboxBluetoothService;
@@ -13,8 +11,6 @@ import com.mac.bluebox.bluetooth.MainActivityServiceConnection;
 import com.mac.bluebox.view.BboxDevicesRecyclerViewAdapter;
 import com.mac.bluebox.view.BboxRecyclerViewWrapper;
 import com.mac.bluebox.view.SwipeRefreshLayoutWrapper;
-
-import java.util.Set;
 
 import roboguice.activity.RoboActivity;
 import roboguice.inject.ContentView;

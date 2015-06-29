@@ -60,6 +60,15 @@ public class ServerThread extends Thread {
         for (ConnectedThread connectedThread: connectedThreads) {
             connectedThread.interrupt();
         }
+
+
+        try {
+            socket.getInputStream().close();
+            socket.getOutputStream().close();
+            socket.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private void manageConnectedSocket(BluetoothSocket socket) {
