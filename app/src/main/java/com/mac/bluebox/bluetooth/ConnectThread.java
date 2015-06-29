@@ -4,8 +4,10 @@ import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
 import android.os.Handler;
+import android.os.IBinder;
 
 import java.io.IOException;
+import java.security.MessageDigest;
 import java.util.UUID;
 
 /**

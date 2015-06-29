@@ -36,12 +36,11 @@ public class ConnectedThread extends Thread {
     }
 
     public void run() {
-        Log.e(TAG, "Connected Socket");
         byte[] buffer = new byte[1024];  // buffer store for the stream
         int bytes; // bytes returned from read()
 
         // Keep listening to the InputStream until an exception occurs
-        while (true) {
+        while (!isInterrupted()) {
             try {
                 // Read from the InputStream
                 bytes = mmInStream.read(buffer);
@@ -52,19 +51,26 @@ public class ConnectedThread extends Thread {
                 break;
             }
         }
+
+        try {
+            mmInStream.close();
+            mmOutStream.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        try {
+            mmSocket.close();
+            Log.e(TAG, "Socket closed.");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     /* Call this from the main activity to send data to the remote device */
     public void write(byte[] bytes) {
         try {
             mmOutStream.write(bytes);
-        } catch (IOException e) { }
-    }
-
-    /* Call this from the main activity to shutdown the connection */
-    public void cancel() {
-        try {
-            mmSocket.close();
         } catch (IOException e) { }
     }
 }

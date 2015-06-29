@@ -2,20 +2,14 @@ package com.mac.bluebox;
 
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.content.ServiceConnection;
 import android.os.Bundle;
-import android.os.IBinder;
-import android.os.Message;
-import android.os.Messenger;
-import android.os.RemoteException;
 import android.util.Log;
 
 import com.google.inject.Inject;
 import com.mac.bluebox.bluetooth.BboxBluetoothService;
-import com.mac.bluebox.bluetooth.BboxDevicesBroadcastReceiver;
+import com.mac.bluebox.bluetooth.MainActivityServiceConnection;
 import com.mac.bluebox.view.BboxDevicesRecyclerViewAdapter;
 import com.mac.bluebox.view.BboxRecyclerViewWrapper;
 import com.mac.bluebox.view.SwipeRefreshLayoutWrapper;
@@ -27,75 +21,50 @@ import roboguice.inject.ContentView;
 
 @ContentView(R.layout.activity_main)
 public class MainActivity extends RoboActivity {
-    private static final int REQUEST_ENABLE_BT = 1;
+    @Inject
+    BboxDevicesRecyclerViewAdapter mBboxDevicesRecyclerViewAdapter;
+
+    @Inject
+    BluetoothAdapter mBluetoothAdapter;
+
+    @Inject
+    MainActivityServiceConnection mServiceConnection;
+
     private static final String TAG = MainActivity.class.getName();
-
-    @Inject
-    BboxDevicesBroadcastReceiver broadcastReceiver;
-
-    @Inject
-    BluetoothAdapter bluetoothAdapter;
-    private ServiceConnection serviceConnection;
+    private static final int REQUEST_ENABLE_BT = 1;
+    private SwipeRefreshLayoutWrapper swipeRefreshLayoutWrapper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        if (!bluetoothAdapter.isEnabled()) {
+        if (!mBluetoothAdapter.isEnabled()) {
             Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
             startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
         }
 
-        Intent intent= new Intent(this, BboxBluetoothService.class);
-        serviceConnection = new ServiceConnection() {
-            @Override
-            public void onServiceConnected(ComponentName name, IBinder service) {
-                turnBluetoothAsServer(new Messenger(service));
-            }
+        new BboxRecyclerViewWrapper(this, R.id.activity_main_recyclerview,
+                mBboxDevicesRecyclerViewAdapter);
 
-            @Override
-            public void onServiceDisconnected(ComponentName name) {}
-        };
-
-        bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE);
-
-        Set<BluetoothDevice> pairedDevices = bluetoothAdapter.getBondedDevices();
-        if (pairedDevices.size() > 0) {
-            for (BluetoothDevice device : pairedDevices) {
-                getRecyclerViewAdapter().getDevices().add(device);
-                getRecyclerViewAdapter().notifyDataSetChanged();
-                Log.e(TAG, "PAIRED DEVICE NAME: " + device.getName());
-            }
-        }
-
-        new BboxRecyclerViewWrapper(this, R.id.activity_main_recyclerview, getRecyclerViewAdapter());
-
-        new SwipeRefreshLayoutWrapper(this, R.id.activity_main_swipe_refresh_layout,
-                getRecyclerViewAdapter(), bluetoothAdapter);
-    }
-
-    private void turnBluetoothAsServer(Messenger service) {
-        Message msg =  Message.obtain(null, BboxBluetoothService.CONNECT_AS_SERVER);
-        try {
-            service.send(msg);
-        } catch (RemoteException e) {
-            e.printStackTrace();
-        }
+        swipeRefreshLayoutWrapper = new SwipeRefreshLayoutWrapper(this, R.id.activity_main_swipe_refresh_layout,
+                mBboxDevicesRecyclerViewAdapter, mBluetoothAdapter);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+
+        Intent intent= new Intent(this, BboxBluetoothService.class);
+        bindService(intent, mServiceConnection, Context.BIND_AUTO_CREATE);
+
+        swipeRefreshLayoutWrapper.refreshDevices();
     }
 
     @Override
-    protected void onPause() {
-        super.onPause();
+    protected void onStop() {
+        super.onStop();
 
-        unbindService(serviceConnection);
-    }
-
-    public BboxDevicesRecyclerViewAdapter getRecyclerViewAdapter() {
-        return broadcastReceiver.getAdapter();
+        mServiceConnection.turnOffBluetoothServer();
+        unbindService(mServiceConnection);
     }
 }

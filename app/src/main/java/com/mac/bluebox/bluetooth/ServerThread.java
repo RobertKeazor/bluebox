@@ -6,17 +6,21 @@ import android.bluetooth.BluetoothSocket;
 import android.os.Handler;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 /**
  * Created by anyer on 6/27/15.
  */
-public class AcceptThread extends Thread {
+public class ServerThread extends Thread {
     private final BluetoothServerSocket mmServerSocket;
     private final Handler mHandler;
+    private List<ConnectedThread> connectedThreads;
 
-    public AcceptThread(BluetoothAdapter bluetoothAdapter, Handler handler) {
+    public ServerThread(BluetoothAdapter bluetoothAdapter, Handler handler) {
         this.mHandler = handler;
+        connectedThreads = new ArrayList<ConnectedThread>();
 
         // Use a temporary object that is later assigned to mmServerSocket,
         // because mmServerSocket is final
@@ -32,9 +36,11 @@ public class AcceptThread extends Thread {
     public void run() {
         BluetoothSocket socket = null;
         // Keep listening until exception occurs or a socket is returned
-        while (true) {
+        while (!isInterrupted()) {
             try {
-                socket = mmServerSocket.accept();
+                if(mmServerSocket != null) {
+                    socket = mmServerSocket.accept();
+                }
             } catch (IOException e) {
                 break;
             }
@@ -42,25 +48,27 @@ public class AcceptThread extends Thread {
             if (socket != null) {
                 // Do work to manage the connection (in a separate thread)
                 manageConnectedSocket(socket);
-                try {
-                    mmServerSocket.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                break;
+//                try {
+//                    mmServerSocket.close();
+//                } catch (IOException e) {
+//                    e.printStackTrace();
+//                }
+//                break;
             }
+        }
+
+        for (ConnectedThread connectedThread: connectedThreads) {
+            connectedThread.interrupt();
         }
     }
 
     private void manageConnectedSocket(BluetoothSocket socket) {
         ConnectedThread connectedThread = new ConnectedThread(socket, mHandler);
-        mHandler.obtainMessage(BboxBluetoothService.SERVER_CLIENT_PAIRED, connectedThread).sendToTarget();
-    }
+        connectedThread.start();
 
-    /** Will cancel the listening socket, and cause the thread to finish */
-    public void cancel() {
-        try {
-            mmServerSocket.close();
-        } catch (IOException e) { }
+        connectedThreads.add(connectedThread);
+
+        mHandler.obtainMessage(BboxBluetoothService.SERVER_HAS_CLIENT_CONNECTED, connectedThread)
+                .sendToTarget();
     }
 }

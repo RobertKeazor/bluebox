@@ -2,36 +2,42 @@ package com.mac.bluebox.view;
 
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
 import android.os.Handler;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.util.Log;
 
 import com.mac.bluebox.R;
+
+import java.util.Set;
 
 /**
  * Created by anyer on 6/27/15.
  */
 public class SwipeRefreshLayoutWrapper {
-    private final SwipeRefreshLayout swipeRefreshLayout;
+    private static final String TAG = SwipeRefreshLayoutWrapper.class.getName();
+    private final SwipeRefreshLayout mSwipeRefreshLayout;
+    private final BboxDevicesRecyclerViewAdapter mRecyclerViewAdapter;
+    private final BluetoothAdapter mBluetoothAdapter;
 
     public SwipeRefreshLayoutWrapper(Activity activity, int resourceId,
                                      final BboxDevicesRecyclerViewAdapter recyclerViewAdapter,
                                      final BluetoothAdapter bluetoothAdapter){
+        this.mRecyclerViewAdapter = recyclerViewAdapter;
+        this.mBluetoothAdapter = bluetoothAdapter;
 
-        swipeRefreshLayout = (SwipeRefreshLayout) activity.findViewById(resourceId);
+        mSwipeRefreshLayout = (SwipeRefreshLayout) activity.findViewById(resourceId);
 
-        swipeRefreshLayout.setColorSchemeResources(R.color.red, R.color.green, R.color.blue,
+        mSwipeRefreshLayout.setColorSchemeResources(R.color.red, R.color.green, R.color.blue,
                 R.color.orange);
-        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
                 new Handler().post(new Runnable() {
                     @Override
                     public void run() {
-                        swipeRefreshLayout.setRefreshing(false);
-                        recyclerViewAdapter.getDevices().clear();
-                        recyclerViewAdapter.notifyDataSetChanged();
-                        bluetoothAdapter.cancelDiscovery();
-                        bluetoothAdapter.startDiscovery();
+                        mSwipeRefreshLayout.setRefreshing(false);
+                        refreshDevices();
                     }
                 });
             }
@@ -39,6 +45,21 @@ public class SwipeRefreshLayoutWrapper {
     }
 
     public SwipeRefreshLayout getSwipeRefreshLayout() {
-        return swipeRefreshLayout;
+        return mSwipeRefreshLayout;
+    }
+
+    public void refreshDevices() {
+        mRecyclerViewAdapter.getDevices().clear();
+
+        Set<BluetoothDevice> pairedDevices = mBluetoothAdapter.getBondedDevices();
+        if (pairedDevices.size() > 0) {
+            for (BluetoothDevice device : pairedDevices) {
+                mRecyclerViewAdapter.getDevices().add(device);
+
+                Log.e(TAG, "PAIRED DEVICE NAME: " + device.getName());
+            }
+        }
+
+        mRecyclerViewAdapter.notifyDataSetChanged();
     }
 }
