@@ -51,12 +51,6 @@ public class ServerThread extends Thread {
             if (socket != null) {
                 // Do work to manage the connection (in a separate thread)
                 manageConnectedSocket(socket);
-//                try {
-//                    mmServerSocket.close();
-//                } catch (IOException e) {
-//                    e.printStackTrace();
-//                }
-//                break;
             }
         }
     }
@@ -74,6 +68,13 @@ public class ServerThread extends Thread {
     /** Will cancel an in-progress connection, and close the socket */
     public void cancel() {
         interrupt();
+
+        try {
+            mmServerSocket.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
         for (ConnectedThread connectedThread: connectedThreads) {
             connectedThread.cancel();
             connectedThread = null;

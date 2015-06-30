@@ -130,7 +130,7 @@ public class IncommingMessagesHandler extends Handler {;
         if (connectedThread != null) {
             connectedThread.cancel();
         }
-        
+
         connectedThread = null;
     }
 
