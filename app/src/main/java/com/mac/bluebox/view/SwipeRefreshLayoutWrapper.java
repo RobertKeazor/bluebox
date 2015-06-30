@@ -56,7 +56,7 @@ public class SwipeRefreshLayoutWrapper {
             for (BluetoothDevice device : pairedDevices) {
                 mRecyclerViewAdapter.getDevices().add(device);
 
-                Log.e(TAG, "PAIRED DEVICE NAME: " + device.getName());
+//                Log.e(TAG, "PAIRED DEVICE NAME: " + device.getName());
             }
         }
 

@@ -21,7 +21,8 @@ public class MainActivityServiceConnection implements ServiceConnection{
         this.service = service;
         mIsServiceBounded = true;
 
-        Log.e(TAG, "MainActivity is bonded to service.");
+//        Log.e(TAG, "MainActivity is bonded to service.");
+
         turnOnBluetoothServer();
     }
 

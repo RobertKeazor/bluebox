@@ -65,6 +65,8 @@ public class ConnectedThread extends Thread {
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+        mHandler.obtainMessage(BboxBluetoothService.SOCKET_DISCONNECTED).sendToTarget();
     }
 
     /* Call this from the main activity to send data to the remote device */

@@ -77,7 +77,7 @@ public class ServerThread extends Thread {
 
         connectedThreads.add(connectedThread);
 
-        mHandler.obtainMessage(BboxBluetoothService.SERVER_HAS_CLIENT_CONNECTED, connectedThread)
+        mHandler.obtainMessage(BboxBluetoothService.NEW_CLIENT_CONNECTED, connectedThread)
                 .sendToTarget();
     }
 }

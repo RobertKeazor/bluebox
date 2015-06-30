@@ -38,14 +38,14 @@ public class DetailsActivity extends RoboActivity {
         registerReceiver(broadcastReceiver, filter); // Don't forget to unregister during onDestroy
 
         new BboxRecyclerViewWrapper(this, R.id.activity_details_recyclerview, getRecyclerViewAdapter());
+
+        Object device = getIntent().getExtras().get(BluetoothDevice.EXTRA_DEVICE);
+        serviceConnection.setDevice(device);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-
-        Object device = getIntent().getExtras().get(BluetoothDevice.EXTRA_DEVICE);
-        serviceConnection.setDevice(device);
 
         Intent intent= new Intent(this, BboxBluetoothService.class);
         bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE);

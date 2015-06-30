@@ -30,7 +30,7 @@ public class DetailActivityServiceConnection implements ServiceConnection{
 
 
     private void connectToServer() {
-        sendMessage(BboxBluetoothService.CONNECT_TO_SERVER);
+        sendMessage(BboxBluetoothService.CONNECT_SOCKET);
     }
 
     private void sendMessage(int what) {
@@ -39,7 +39,7 @@ public class DetailActivityServiceConnection implements ServiceConnection{
             Message msg =  Message.obtain(null, what);
 
             switch (what) {
-                case BboxBluetoothService.CONNECT_TO_SERVER:
+                case BboxBluetoothService.CONNECT_SOCKET:
                     msg.obj = device;
                     break;
             }
@@ -53,7 +53,7 @@ public class DetailActivityServiceConnection implements ServiceConnection{
     }
 
     public void disconnectFromServer() {
-        sendMessage(BboxBluetoothService.DISCONNECT_FROM_SERVER);
+        sendMessage(BboxBluetoothService.DISCONNECT_SOCKET);
     }
 
     private boolean isServiceBounded() {

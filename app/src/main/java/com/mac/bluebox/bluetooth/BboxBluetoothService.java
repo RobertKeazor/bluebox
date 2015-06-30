@@ -21,13 +21,14 @@ public class BboxBluetoothService extends RoboService {
 
     private static final String TAG = BboxBluetoothService.class.getName();
 
-    public static final int CLIENT_SERVER_PAIRED = 1;
+    public static final int SOCKET_CONNECTED = 1;
     public static final int SOCKET_MESSAGE_READ = 2;
     public static final int TURN_ON_BLUETOOTH_SERVER = 3;
-    public static final int SERVER_HAS_CLIENT_CONNECTED = 4;
+    public static final int NEW_CLIENT_CONNECTED = 4;
     public static final int TURN_OFF_BLUETOOTH_SERVER = 5;
-    public static final int CONNECT_TO_SERVER = 6;
-    public static final int DISCONNECT_FROM_SERVER = 7;
+    public static final int CONNECT_SOCKET = 6;
+    public static final int DISCONNECT_SOCKET = 7;
+    public static final int SOCKET_DISCONNECTED = 8;
 
 
     /**
