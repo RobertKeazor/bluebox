@@ -39,41 +39,36 @@ public class IncommingMessagesHandler extends Handler {;
 
         switch (msg.what) {
             case BboxBluetoothService.TURN_ON_BLUETOOTH_SERVER:
-//                stopServer();
-//                stopConnectingThread();
-//                stopConnectedThread();
-//
-//                serverThread = new ServerThread(mBluetoothAdapter, IncommingMessagesHandler.this);
-//                serverThread.start();
+                stopServer();
+
+                serverThread = new ServerThread(mBluetoothAdapter, IncommingMessagesHandler.this);
+                serverThread.start();
 
                 Log.e(TAG, "TURN_ON_BLUETOOTH_SERVER ....");
                 break;
 
             case BboxBluetoothService.TURN_OFF_BLUETOOTH_SERVER:
-//                stopServer();
-//                stopConnectingThread();
-//                stopConnectedThread();
+                stopServer();
 
                 Log.e(TAG, "TURN_OFF_BLUETOOTH_SERVER ....");
                 break;
 
             case BboxBluetoothService.NEW_CLIENT_CONNECTED:
-//                List<String> musicFiles = readMusicFiles();
-//                String join = ArrayHelper.joinStringByComma(musicFiles);
-//
-//                ((ConnectedThread) msg.obj).write(join.getBytes());
+                List<String> musicFiles = readMusicFiles();
+                String join = ArrayHelper.joinStringByComma(musicFiles);
+
+                ((ConnectedThread) msg.obj).write(join.getBytes());
 
                 Log.e(TAG, "NEW_CLIENT_CONNECTED ...");
                 break;
 
 
             case BboxBluetoothService.SOCKET_CONNECTED:
-//                stopServer();
-//                stopConnectingThread();
-//                stopConnectedThread();
-//
-//                connectedThread = (ConnectedThread) msg.obj;
-//                connectedThread.start();
+                stopConnectingThread();
+                stopConnectedThread();
+
+                connectedThread = (ConnectedThread) msg.obj;
+                connectedThread.start();
 
                 Log.e(TAG, "SOCKET_CONNECTED ...");
                 break;
@@ -91,9 +86,8 @@ public class IncommingMessagesHandler extends Handler {;
 
 
             case BboxBluetoothService.CONNECT_SOCKET:
-//                stopServer();
-//                stopConnectedThread();
-//                stopConnectingThread();
+                stopConnectedThread();
+                stopConnectingThread();
 
                 connectingThread = new ConnectThread((BluetoothDevice) msg.obj, mBluetoothAdapter,
                         IncommingMessagesHandler.this);
@@ -105,9 +99,8 @@ public class IncommingMessagesHandler extends Handler {;
 
 
             case BboxBluetoothService.DISCONNECT_SOCKET:
-//                stopServer();
-//                stopConnectingThread();
-//                stopConnectedThread();
+                stopConnectingThread();
+                stopConnectedThread();
 
                 Log.e(TAG, "DISCONNECT_SOCKET ....");
                 break;
