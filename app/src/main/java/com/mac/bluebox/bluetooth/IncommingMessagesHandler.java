@@ -48,7 +48,7 @@ public class IncommingMessagesHandler extends Handler {;
                 break;
 
             case BboxBluetoothService.TURN_OFF_BLUETOOTH_SERVER:
-                stopServer();
+                //stopServer();
 
                 Log.e(TAG, "TURN_OFF_BLUETOOTH_SERVER ....");
                 break;
@@ -64,8 +64,8 @@ public class IncommingMessagesHandler extends Handler {;
 
 
             case BboxBluetoothService.SOCKET_CONNECTED:
-                stopConnectingThread();
-                stopConnectedThread();
+                //stopConnectingThread();
+                //stopConnectedThread();
 
                 connectedThread = (ConnectedThread) msg.obj;
                 connectedThread.start();
@@ -86,7 +86,7 @@ public class IncommingMessagesHandler extends Handler {;
 
 
             case BboxBluetoothService.CONNECT_SOCKET:
-                stopConnectedThread();
+                //stopConnectedThread();
                 stopConnectingThread();
 
                 connectingThread = new ConnectThread((BluetoothDevice) msg.obj, mBluetoothAdapter,
