@@ -113,22 +113,25 @@ public class IncommingMessagesHandler extends Handler {;
     private void stopConnectingThread() {
         if (connectingThread != null) {
             connectingThread.cancel();
-            connectingThread = null;
         }
+
+        connectingThread = null;
     }
 
     private void stopServer() {
         if (serverThread != null) {
             serverThread.cancel();
-            serverThread = null;
         }
+
+        serverThread = null;
     }
 
     private void stopConnectedThread() {
         if (connectedThread != null) {
             connectedThread.cancel();
-            connectedThread = null;
         }
+        
+        connectedThread = null;
     }
 
     private List<String> readMusicFiles() {

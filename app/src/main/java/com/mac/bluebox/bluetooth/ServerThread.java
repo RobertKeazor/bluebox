@@ -73,6 +73,7 @@ public class ServerThread extends Thread {
 
     /** Will cancel an in-progress connection, and close the socket */
     public void cancel() {
+        interrupt();
         for (ConnectedThread connectedThread: connectedThreads) {
             connectedThread.cancel();
             connectedThread = null;
