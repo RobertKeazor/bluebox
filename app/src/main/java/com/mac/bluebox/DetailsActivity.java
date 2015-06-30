@@ -20,8 +20,6 @@ import roboguice.inject.ContentView;
 @ContentView(R.layout.activity_details)
 public class DetailsActivity extends RoboActivity {
     private static final String TAG = DetailsActivity.class.getName();
-    @Inject
-    BluetoothAdapter mBluetoothAdapter;
 
     @Inject
     BboxTracksBroadcastReceiver broadcastReceiver;

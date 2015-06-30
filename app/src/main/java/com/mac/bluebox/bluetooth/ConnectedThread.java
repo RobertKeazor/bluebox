@@ -80,4 +80,8 @@ public class ConnectedThread extends Thread {
 
         Log.e(TAG, "Socket closed.");
     }
+
+    public String getDeviceName() {
+        return mmSocket.getRemoteDevice().getName();
+    }
 }

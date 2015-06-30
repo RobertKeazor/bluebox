@@ -59,6 +59,13 @@ public class IncommingMessagesHandler extends Handler {;
 
                 ((ConnectedThread) msg.obj).write(join.getBytes());
 
+                Intent intentServing = new Intent();
+                intentServing.setAction(BboxDevicesBroadcastReceiver.SERVING);
+                intentServing.putExtra(BboxDevicesBroadcastReceiver.DEVICE_NAME,
+                        ((ConnectedThread) msg.obj).getDeviceName());
+
+                mContext.sendBroadcast(intentServing);
+
                 Log.e(TAG, "NEW_CLIENT_CONNECTED ...");
                 break;
 
@@ -76,10 +83,12 @@ public class IncommingMessagesHandler extends Handler {;
             case BboxBluetoothService.SOCKET_MESSAGE_READ:
                 byte[] bytes = (byte[]) msg.obj;
 
-                Intent intent = new Intent();
-                intent.setAction(BboxTracksBroadcastReceiver.TRACKS_LIST_DISCOVERED);
-                intent.putExtra(BboxTracksBroadcastReceiver.EXTRA_TRACKS, new String(bytes));
-                mContext.sendBroadcast(intent);
+                Intent intentTracksListDiscovered = new Intent();
+                intentTracksListDiscovered.setAction(
+                        BboxTracksBroadcastReceiver.TRACKS_LIST_DISCOVERED);
+                intentTracksListDiscovered.putExtra(BboxTracksBroadcastReceiver.EXTRA_TRACKS,
+                        new String(bytes));
+                mContext.sendBroadcast(intentTracksListDiscovered);
 
                 Log.e(TAG, "SOCKET_MESSAGE_READ:" + new String(bytes));
                 break;
@@ -103,6 +112,12 @@ public class IncommingMessagesHandler extends Handler {;
                 stopConnectedThread();
 
                 Log.e(TAG, "DISCONNECT_SOCKET ....");
+                break;
+
+            case BboxBluetoothService.SOCKET_DISCONNECTED:
+                mContext.sendBroadcast(new Intent(BboxDevicesBroadcastReceiver.STOP_SERVING));
+
+                Log.e(TAG, "SOCKET_DISCONNECTED ...." + mContext);
                 break;
 
             default:

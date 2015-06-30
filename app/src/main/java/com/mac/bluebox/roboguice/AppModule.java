@@ -4,6 +4,7 @@ import android.bluetooth.BluetoothAdapter;
 
 import com.google.inject.AbstractModule;
 import com.mac.bluebox.bluetooth.BboxBluetoothService;
+import com.mac.bluebox.bluetooth.BboxDevicesBroadcastReceiver;
 import com.mac.bluebox.bluetooth.BboxTracksBroadcastReceiver;
 import com.mac.bluebox.bluetooth.IncommingMessagesHandler;
 import com.mac.bluebox.bluetooth.MainActivityServiceConnection;
@@ -19,7 +20,7 @@ public class AppModule extends AbstractModule {
         bind(BluetoothAdapter.class).toProvider(BluetoothAdapterProvider.class);
 
         bind(BboxDevicesRecyclerViewAdapter.class).toProvider(BboxDevicesRecyclerViewAdapterProvider.class);
-//        bind(BboxDevicesBroadcastReceiver.class).toProvider(BboxDevicesBroadcastReceiverProvider.class);
+        bind(BboxDevicesBroadcastReceiver.class).toProvider(BboxDevicesBroadcastReceiverProvider.class);
 
         bind(BboxTracksRecyclerViewAdapter.class).toProvider(BboxTracksRecyclerViewAdapterProvider.class);
         bind(BboxTracksBroadcastReceiver.class).toProvider(BboxTracksBroadcastReceiverProvider.class);
