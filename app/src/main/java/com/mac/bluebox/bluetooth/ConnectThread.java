@@ -18,6 +18,8 @@ public class ConnectThread extends Thread {
     private Handler mHandler;
 
     public ConnectThread(BluetoothDevice device, BluetoothAdapter bluetoothAdapter, Handler handler) {
+        setName(ConnectThread.class.getName());
+
         mBluetoothAdapter = bluetoothAdapter;
         mHandler = handler;
 

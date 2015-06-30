@@ -19,6 +19,8 @@ public class ConnectedThread extends Thread {
     private Handler mHandler;
 
     public ConnectedThread(BluetoothSocket socket, Handler handler) {
+        setName(ConnectedThread.class.getName());
+
         mmSocket = socket;
         mHandler = handler;
         InputStream tmpIn = null;
@@ -29,7 +31,8 @@ public class ConnectedThread extends Thread {
         try {
             tmpIn = socket.getInputStream();
             tmpOut = socket.getOutputStream();
-        } catch (IOException e) { }
+        } catch (IOException e) {
+        }
 
         mmInStream = tmpIn;
         mmOutStream = tmpOut;
@@ -52,27 +55,28 @@ public class ConnectedThread extends Thread {
             }
         }
 
-        try {
-            mmInStream.close();
-            mmOutStream.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        try {
-            mmSocket.close();
-            Log.e(TAG, "Socket closed.");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        mHandler.obtainMessage(BboxBluetoothService.SOCKET_DISCONNECTED).sendToTarget();
+        cancel();
     }
 
     /* Call this from the main activity to send data to the remote device */
     public void write(byte[] bytes) {
         try {
             mmOutStream.write(bytes);
-        } catch (IOException e) { }
+        } catch (IOException e) {
+        }
+    }
+
+    /**
+     * Will cancel an in-progress connection, and close the socket
+     */
+    public void cancel() {
+        try {
+            mmSocket.close();
+        } catch (IOException e) {
+        }
+
+        mHandler.obtainMessage(BboxBluetoothService.SOCKET_DISCONNECTED).sendToTarget();
+
+        Log.e(TAG, "Socket closed.");
     }
 }

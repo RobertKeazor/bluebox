@@ -4,6 +4,7 @@ import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothServerSocket;
 import android.bluetooth.BluetoothSocket;
 import android.os.Handler;
+import android.util.Log;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -19,6 +20,8 @@ public class ServerThread extends Thread {
     private List<ConnectedThread> connectedThreads;
 
     public ServerThread(BluetoothAdapter bluetoothAdapter, Handler handler) {
+        setName(ServerThread.class.getName());
+
         this.mHandler = handler;
         connectedThreads = new ArrayList<ConnectedThread>();
 
@@ -56,19 +59,6 @@ public class ServerThread extends Thread {
 //                break;
             }
         }
-
-        for (ConnectedThread connectedThread: connectedThreads) {
-            connectedThread.interrupt();
-        }
-
-
-        try {
-            socket.getInputStream().close();
-            socket.getOutputStream().close();
-            socket.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 
     private void manageConnectedSocket(BluetoothSocket socket) {
@@ -79,5 +69,13 @@ public class ServerThread extends Thread {
 
         mHandler.obtainMessage(BboxBluetoothService.NEW_CLIENT_CONNECTED, connectedThread)
                 .sendToTarget();
+    }
+
+    /** Will cancel an in-progress connection, and close the socket */
+    public void cancel() {
+        for (ConnectedThread connectedThread: connectedThreads) {
+            connectedThread.cancel();
+            connectedThread = null;
+        }
     }
 }

@@ -48,7 +48,7 @@ public class IncommingMessagesHandler extends Handler {;
                 break;
 
             case BboxBluetoothService.TURN_OFF_BLUETOOTH_SERVER:
-                //stopServer();
+                stopServer();
 
                 Log.e(TAG, "TURN_OFF_BLUETOOTH_SERVER ....");
                 break;
@@ -119,14 +119,14 @@ public class IncommingMessagesHandler extends Handler {;
 
     private void stopServer() {
         if (serverThread != null) {
-            serverThread.interrupt();
+            serverThread.cancel();
             serverThread = null;
         }
     }
 
     private void stopConnectedThread() {
         if (connectedThread != null) {
-            connectedThread.interrupt();
+            connectedThread.cancel();
             connectedThread = null;
         }
     }
