@@ -43,7 +43,7 @@ public class DevicesRecyclerViewAdapter extends
     public void onBindViewHolder(BboxRecyclerViewHolder bboxRecyclerViewHolder, int i) {
         final BluetoothDevice device = devices.get(i);
         bboxRecyclerViewHolder.textViewDevice.setText(device.getName());
-        bboxRecyclerViewHolder.textDeviceInfo.setText(device.getType());
+        bboxRecyclerViewHolder.textDeviceInfo.setText(device.getBondState());
         bboxRecyclerViewHolder.textDeviceAddress.setText(device.getAddress());
 
        bboxRecyclerViewHolder.imageButtonDevice.setOnClickListener(new View.OnClickListener() {
