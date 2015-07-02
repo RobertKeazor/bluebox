@@ -3,7 +3,10 @@ package com.mac.bluebox.bluetooth;
 import android.bluetooth.BluetoothSocket;
 import android.os.Handler;
 import android.util.Log;
+import android.util.Size;
 
+import com.mac.bluebox.helper.PlayAudioHelper;
+import com.mac.bluebox.helper.StreamAudioHelper;
 import com.mac.bluebox.service.BboxBluetoothService;
 
 import java.io.IOException;
@@ -46,7 +49,8 @@ public class ConnectedThread extends Thread {
     }
 
     public void run() {
-        byte[] buffer = new byte[1024];  // buffer store for the stream
+        int SIZE = StreamAudioHelper.BUF_SIZE + 1;
+        byte[] buffer = new byte[SIZE];  // buffer store for the stream
         int bytes; // bytes returned from read()
 
         // Keep listening to the InputStream until an exception occurs
@@ -54,35 +58,38 @@ public class ConnectedThread extends Thread {
             try {
                 // Read from the InputStream
                 bytes = mmInStream.read(buffer);
-                byte[] data = new byte[bytes - 1];
-
-                for (int i = 0; i < bytes - 1; i++) {
-                    data[i] = buffer[i+1];
-                }
-
-                byte operation = buffer[0];
 
                 if (bytes > 1) {
+                    byte operation = buffer[0];
+
+                    byte[] data = new byte[bytes - 1];
+
+                    for (int i = 0; i < bytes - 1; i++) {
+                        data[i] = buffer[i + 1];
+                    }
+
+                    Log.e(TAG, "Operation: " + operation + ", Bytes: " + bytes);
                     switch (operation) {
                         case ConnectedThread.SERVER_SEND_LIST_OF_TRACKS:
                             mHandler.obtainMessage(BboxBluetoothService.CLIENT_RECEIVE_LIST_OF_TRACKS,
-                                    bytes, -1, data).sendToTarget();
+                                    data).sendToTarget();
                             break;
 
                         case ConnectedThread.SERVER_SEND_STREAM_TRACK:
                             mHandler.obtainMessage(BboxBluetoothService.CLIENT_RECEIVE_STREAM_TRACK,
-                                    bytes, -1, data).sendToTarget();
+                                    bytes - 1, -1, data).sendToTarget();
 
                             break;
 
                         case ConnectedThread.CLIENT_SEND_PLAY_TRACK:
                             mHandler.obtainMessage(BboxBluetoothService.SERVER_RECEIVE_PLAY_TRACK,
-                                    bytes, -1, data).sendToTarget();
+                                    data).sendToTarget();
 
                             break;
                     }
                 }
-            } catch (IOException e) {
+            } catch (Throwable e) {
+                Log.e(TAG, e.getMessage());
                 break;
             }
         }
@@ -94,8 +101,10 @@ public class ConnectedThread extends Thread {
     public void write(byte[] bytes) {
         try {
             mmOutStream.write(bytes);
+            //mmOutStream.flush();
         } catch (IOException e) {
         }
+
     }
 
     /**

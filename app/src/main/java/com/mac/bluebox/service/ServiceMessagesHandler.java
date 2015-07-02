@@ -17,6 +17,8 @@ import com.mac.bluebox.helper.ArrayHelper;
 import com.mac.bluebox.bluetooth.ConnectThread;
 import com.mac.bluebox.bluetooth.ConnectedThread;
 import com.mac.bluebox.bluetooth.ServerThread;
+import com.mac.bluebox.helper.PlayAudioHelper;
+import com.mac.bluebox.helper.StreamAudioHelper;
 import com.mac.bluebox.receivers.DevicesBroadcastReceiver;
 import com.mac.bluebox.receivers.TracksBroadcastReceiver;
 
@@ -39,6 +41,8 @@ public class ServiceMessagesHandler extends Handler {
     private ConnectThread mConnectingThread = null;
     private ConnectedThread mConnectedThread = null;
     private ConnectedThread mClientConnectedThread = null;
+    PlayAudioHelper playAudio = new PlayAudioHelper();
+    StreamAudioHelper streamAudio;
 
     @Override
     public void handleMessage(Message msg) {
@@ -83,6 +87,8 @@ public class ServiceMessagesHandler extends Handler {
 
                 mContext.sendBroadcast(intentServing);
 
+                streamAudio = new StreamAudioHelper();
+
                 Log.e(TAG, "SERVER_HAS_A_NEW_CLIENT_CONNECTED ...");
                 break;
 
@@ -106,7 +112,7 @@ public class ServiceMessagesHandler extends Handler {
                         new String(bytes));
                 mContext.sendBroadcast(intentTracksListDiscovered);
 
-                Log.e(TAG, "CLIENT_RECEIVE_LIST_OF_TRACKS:" + new String(bytes));
+                Log.e(TAG, "CLIENT_RECEIVE_LIST_OF_TRACKS:");
                 break;
 
 
@@ -138,7 +144,13 @@ public class ServiceMessagesHandler extends Handler {
                 break;
 
             case BboxBluetoothService.CLIENT_RECEIVE_STREAM_TRACK:
-                byte[] stream = (byte[]) msg.obj;
+                if (msg.obj != null) {
+                    byte[] stream = (byte[]) msg.obj;
+
+                    if (stream != null) {
+                        playAudio.play(stream, msg.arg1);
+                    }
+                }
 
                 Log.e(TAG, "CLIENT_RECEIVE_STREAM_TRACK ...");
                 break;
@@ -146,12 +158,14 @@ public class ServiceMessagesHandler extends Handler {
             case BboxBluetoothService.SERVER_RECEIVE_PLAY_TRACK:
                 String trackID = new String((byte[]) msg.obj);
 
+                streamAudio.stream(getTrack(), mClientConnectedThread);
                 Log.e(TAG, "SERVER_RECEIVE_PLAY_TRACK ...");
                 break;
 
             case BboxBluetoothService.CLIENT_SEND_PLAY_TRACK:
                 mConnectedThread.write(new byte[]{ConnectedThread.CLIENT_SEND_PLAY_TRACK, 1});
 
+                Log.e(TAG, "CLIENT_SEND_PLAY_TRACK ...");
                 break;
 
             default:
@@ -237,12 +251,18 @@ public class ServiceMessagesHandler extends Handler {
 
         File file = null;
 
-        if (audioFiles.getCount() > 0) {
-            audioFiles.moveToNext();
+        while (audioFiles.moveToNext()) {
+            String trackName = audioFiles.getString(audioFiles.getColumnIndex(
+                    MediaStore.Files.FileColumns.DISPLAY_NAME));
 
-            String fileName = audioFiles.getString(audioFiles.getColumnIndex(
-                    MediaStore.Audio.Media.DATA));
-            file = new File(fileName);
+
+            if (trackName.toLowerCase().equals("1.wav")) {
+                String fileName = audioFiles.getString(audioFiles.getColumnIndex(
+                        MediaStore.Audio.Media.DATA));
+                file = new File(fileName);
+
+                return file;
+            }
         }
 
         return file;

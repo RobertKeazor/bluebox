@@ -22,8 +22,6 @@ import java.util.List;
 public class DevicesRecyclerViewAdapter extends
         RecyclerView.Adapter<DevicesRecyclerViewAdapter.BboxRecyclerViewHolder> {
 
-    private static final String DEVICE_MAC = "DEVICE_MAC";
-    private static final String DEVICE_NAME = "DEVICE_NAME";
     private List<BluetoothDevice> devices;
     private final Context context;
 
