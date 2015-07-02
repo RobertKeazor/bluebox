@@ -104,6 +104,7 @@ public class MainActivity extends RoboActivity {
             @Override
             public void onRefresh() {
                 refreshPairedDevices();
+                mSwipeRefreshLayout.setRefreshing(false);
             }
         });
     }
