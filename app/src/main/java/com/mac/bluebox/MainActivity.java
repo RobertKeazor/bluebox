@@ -1,5 +1,6 @@
 package com.mac.bluebox;
 
+import android.app.ActionBar;
 import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
 import android.content.Intent;
@@ -7,6 +8,7 @@ import android.content.IntentFilter;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
 
@@ -51,6 +53,16 @@ public class MainActivity extends RoboActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        ActionBar actionBar = getActionBar();
+        actionBar.setDisplayShowHomeEnabled(false);
+        actionBar.setDisplayShowTitleEnabled(false);
+        LayoutInflater lInflater = LayoutInflater.from(this);
+        View customActionBarView = lInflater.inflate(R.layout.action_bar_layout, null);
+        TextView mTitleTextView = (TextView) customActionBarView.findViewById(R.id.title_text);
+        mTitleTextView.setText("BlueBox");
+        actionBar.setCustomView(customActionBarView);
+        actionBar.setDisplayShowCustomEnabled(true);
 
         mHandler = new MainActivityHandler();
         broadcastReceiver.setHandler(mHandler);
