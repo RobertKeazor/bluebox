@@ -14,8 +14,8 @@
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:weightSum="10"
-        android:divider="@drawable/abc_list_divider_mtrl_alpha">
+        android:layout_gravity="center_horizontal"
+        android:weightSum="10">
 
         <ImageButton
             android:layout_width="fill_parent"
@@ -24,7 +24,7 @@
             android:alpha=".9"
             android:layout_marginLeft="0dp"
             android:src="@drawable/android_logo"
-            android:layout_weight="7"
+            android:layout_weight="6"
             android:paddingTop="24dp"
             android:layout_gravity="center_horizontal"
             android:scaleType="fitCenter"
@@ -32,57 +32,80 @@
             android:backgroundTint="@color/white"
             android:backgroundTintMode="src_atop" />
 
-        <TextView
-            android:id="@+id/card_view_textview_device"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Place"
-            android:textSize="24sp"
-            android:alpha="0.77"
-            android:textColor="#ffffff"
-            android:layout_marginLeft="16dp"
-            android:layout_weight="1"
-            android:elegantTextHeight="false" />
+            android:weightSum="6"
+            android:divider="@drawable/abc_list_divider_mtrl_alpha"
+            android:layout_weight="4"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp">
 
-        <TextView
-            android:id="@+id/card_view_textview_device2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Device Info"
-            android:textSize="14sp"
-            android:alpha="0.45"
-            android:textColor="#ffffff"
-            android:layout_marginLeft="16dp"
-            android:layout_weight="1" />
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:weightSum="3"
+                android:divider="@drawable/abc_list_divider_mtrl_alpha"
+                android:layout_weight="4">
 
-        <TextView
-            android:id="@+id/card_view_textview_device3"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Device Address"
-            android:textSize="14sp"
-            android:alpha="0.45"
-            android:textColor="#ffffff"
-            android:layout_marginLeft="16dp"
-            android:layout_weight="1"
-            android:paddingBottom="8dp" />
+                <TextView
+                    android:id="@+id/card_view_textview_device"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Place"
+                    android:textSize="24sp"
+                    android:alpha="0.77"
+                    android:textColor="#ffffff"
+                    android:layout_marginLeft="16dp"
+                    android:layout_weight="1"
+                    android:elegantTextHeight="false" />
 
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/imageView"
-            android:layout_gravity="right"
-            android:src="@android:drawable/stat_sys_data_bluetooth"
-            android:layout_alignParentBottom="false"
-            android:background="@drawable/img-thing"
-            android:elevation="2dp"
-            android:nestedScrollingEnabled="false"
-            android:tint="@color/white"
-            android:minHeight="48dp"
-            android:minWidth="48dp"
-            android:scaleType="fitCenter"
-            android:backgroundTint="@color/white" />
+                <TextView
+                    android:id="@+id/card_view_textview_device_info"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Device Info"
+                    android:textSize="14sp"
+                    android:alpha="0.45"
+                    android:textColor="#ffffff"
+                    android:layout_marginLeft="16dp"
+                    android:layout_weight="1" />
+
+                <TextView
+                    android:id="@+id/card_view_textview_device_address"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Device Address"
+                    android:textSize="14sp"
+                    android:alpha="0.45"
+                    android:textColor="#ffffff"
+                    android:layout_marginLeft="16dp"
+                    android:layout_weight="1"
+                    android:paddingBottom="8dp" />
+
+            </LinearLayout>
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/card_view_button_connect"
+                android:layout_gravity="center_vertical"
+                android:src="@android:drawable/stat_sys_data_bluetooth"
+                android:layout_alignParentBottom="false"
+                android:elevation="4dp"
+                android:nestedScrollingEnabled="false"
+                android:tint="@color/white"
+                android:minWidth="100dp"
+                android:scaleType="fitCenter"
+                android:background="@drawable/circle"
+                android:backgroundTint="@color/accent"
+                android:layout_weight="2"
+                android:layout_marginRight="16dp"
+                android:minHeight="60dp"
+                android:maxHeight="60dp"
+                android:maxWidth="100dp" />
+        </LinearLayout>
     </LinearLayout>
-
-
 </android.support.v7.widget.CardView>

@@ -7,6 +7,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -42,8 +43,10 @@ public class DevicesRecyclerViewAdapter extends
     public void onBindViewHolder(BboxRecyclerViewHolder bboxRecyclerViewHolder, int i) {
         final BluetoothDevice device = devices.get(i);
         bboxRecyclerViewHolder.textViewDevice.setText(device.getName());
+        bboxRecyclerViewHolder.textDeviceInfo.setText(device.getType());
+        bboxRecyclerViewHolder.textDeviceAddress.setText(device.getAddress());
 
-       bboxRecyclerViewHolder.imageViewDevice.setOnClickListener(new View.OnClickListener() {
+       bboxRecyclerViewHolder.imageButtonDevice.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Toast.makeText(context, device.getName(), Toast.LENGTH_SHORT).show();
@@ -67,12 +70,18 @@ public class DevicesRecyclerViewAdapter extends
     public static class BboxRecyclerViewHolder extends RecyclerView.ViewHolder {
         protected TextView textViewDevice;
         protected ImageView imageViewDevice;
+        protected ImageView imageButtonDevice;
+        protected TextView textDeviceInfo;
+        protected TextView textDeviceAddress;
 
         public BboxRecyclerViewHolder(View v) {
             super(v);
 
             textViewDevice =  (TextView) v.findViewById(R.id.card_view_textview_device);
             imageViewDevice = (ImageView) v.findViewById(R.id.card_view_image_device);
+            imageButtonDevice = (ImageView) v.findViewById(R.id.card_view_button_connect);
+            textDeviceInfo =  (TextView) v.findViewById(R.id.card_view_textview_device_info);
+            textDeviceAddress =  (TextView) v.findViewById(R.id.card_view_textview_device_address);
         }
     }
 }
