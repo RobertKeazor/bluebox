@@ -2,8 +2,8 @@ package com.mac.bluebox.roboguice;
 
 import com.google.inject.Inject;
 import com.google.inject.Provider;
-import com.mac.bluebox.bluetooth.BboxDevicesBroadcastReceiver;
-import com.mac.bluebox.view.BboxDevicesRecyclerViewAdapter;
+import com.mac.bluebox.receivers.DevicesBroadcastReceiver;
+import com.mac.bluebox.view.DevicesRecyclerViewAdapter;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -11,14 +11,14 @@ import static org.mockito.Mockito.when;
 /**
  * Created by anyer on 6/26/15.
  */
-public class BboxBroadcastReceiverTestProvider implements Provider<BboxDevicesBroadcastReceiver> {
+public class BboxBroadcastReceiverTestProvider implements Provider<DevicesBroadcastReceiver> {
     @Inject
-    BboxDevicesRecyclerViewAdapter bboxDevicesRecyclerViewAdapter;
+    DevicesRecyclerViewAdapter devicesRecyclerViewAdapter;
 
     @Override
-    public BboxDevicesBroadcastReceiver get() {
-        BboxDevicesBroadcastReceiver bboxBroadcastReceiver = mock(BboxDevicesBroadcastReceiver.class);
-        when(bboxBroadcastReceiver.getAdapter()).thenReturn(bboxDevicesRecyclerViewAdapter);
+    public DevicesBroadcastReceiver get() {
+        DevicesBroadcastReceiver bboxBroadcastReceiver = mock(DevicesBroadcastReceiver.class);
+        when(bboxBroadcastReceiver.getAdapter()).thenReturn(devicesRecyclerViewAdapter);
         return bboxBroadcastReceiver;
     }
 }

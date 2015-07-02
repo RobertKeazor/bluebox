@@ -6,14 +6,11 @@ import android.test.ActivityInstrumentationTestCase2;
 
 import com.google.inject.Injector;
 import com.google.inject.Module;
-import com.mac.bluebox.MainActivity;
+import com.mac.bluebox.activity.MainActivity;
 import com.mac.bluebox.roboguice.AppModule;
 
 import roboguice.RoboGuice;
 
-import static android.support.test.espresso.Espresso.onView;
-import static android.support.test.espresso.assertion.ViewAssertions.matches;
-import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
 

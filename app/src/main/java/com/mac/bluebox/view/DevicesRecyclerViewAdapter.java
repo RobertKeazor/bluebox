@@ -11,7 +11,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.mac.bluebox.DetailsActivity;
+import com.mac.bluebox.activity.DetailsActivity;
 import com.mac.bluebox.R;
 
 import java.util.List;
@@ -19,14 +19,14 @@ import java.util.List;
 /**
  * Created by anyer on 6/26/15.
  */
-public class BboxTracksRecyclerViewAdapter extends
-        RecyclerView.Adapter<BboxTracksRecyclerViewAdapter.BboxRecyclerViewHolder> {
+public class DevicesRecyclerViewAdapter extends
+        RecyclerView.Adapter<DevicesRecyclerViewAdapter.BboxRecyclerViewHolder> {
 
+    private List<BluetoothDevice> devices;
     private final Context context;
-    private final List<String> tracks;
 
-    public BboxTracksRecyclerViewAdapter(List<String> tracks, Context context) {
-        this.tracks = tracks;
+    public DevicesRecyclerViewAdapter(List<BluetoothDevice> devices, Context context) {
+        this.devices = devices;
         this.context = context;
     }
 
@@ -40,26 +40,39 @@ public class BboxTracksRecyclerViewAdapter extends
 
     @Override
     public void onBindViewHolder(BboxRecyclerViewHolder bboxRecyclerViewHolder, int i) {
-        final String track = tracks.get(i);
-        bboxRecyclerViewHolder.textViewDevice.setText(track);
+        final BluetoothDevice device = devices.get(i);
+        bboxRecyclerViewHolder.textViewDevice.setText(device.getName());
+
+       bboxRecyclerViewHolder.imageViewDevice.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(context, device.getName(), Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(v.getContext(), DetailsActivity.class);
+
+                intent.putExtra(BluetoothDevice.EXTRA_DEVICE, device);
+                v.getContext().startActivity(intent);
+            }
+        });
     }
 
     @Override
     public int getItemCount() {
-        return tracks.size();
+        return devices.size();
     }
 
-    public List<String> getTracks() {
-        return tracks;
+    public List<BluetoothDevice> getDevices() {
+        return devices;
     }
 
     public static class BboxRecyclerViewHolder extends RecyclerView.ViewHolder {
         protected TextView textViewDevice;
+        protected ImageView imageViewDevice;
 
         public BboxRecyclerViewHolder(View v) {
             super(v);
 
             textViewDevice =  (TextView) v.findViewById(R.id.card_view_textview_device);
+            imageViewDevice = (ImageView) v.findViewById(R.id.card_view_image_device);
         }
     }
 }

@@ -4,7 +4,8 @@ import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothServerSocket;
 import android.bluetooth.BluetoothSocket;
 import android.os.Handler;
-import android.util.Log;
+
+import com.mac.bluebox.service.BboxBluetoothService;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -61,7 +62,7 @@ public class ServerThread extends Thread {
 
         connectedThreads.add(connectedThread);
 
-        mHandler.obtainMessage(BboxBluetoothService.NEW_CLIENT_CONNECTED, connectedThread)
+        mHandler.obtainMessage(BboxBluetoothService.SERVER_HAS_A_NEW_CLIENT_CONNECTED, connectedThread)
                 .sendToTarget();
     }
 

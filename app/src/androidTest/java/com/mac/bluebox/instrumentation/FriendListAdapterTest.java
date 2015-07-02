@@ -7,7 +7,7 @@ import com.google.inject.Guice;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Module;
-import com.mac.bluebox.bluetooth.BboxBluetoothService;
+import com.mac.bluebox.service.BboxBluetoothService;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;

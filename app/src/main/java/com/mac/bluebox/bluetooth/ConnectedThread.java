@@ -3,6 +3,11 @@ package com.mac.bluebox.bluetooth;
 import android.bluetooth.BluetoothSocket;
 import android.os.Handler;
 import android.util.Log;
+import android.util.Size;
+
+import com.mac.bluebox.helper.PlayAudioHelper;
+import com.mac.bluebox.helper.StreamAudioHelper;
+import com.mac.bluebox.service.BboxBluetoothService;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -13,6 +18,11 @@ import java.io.OutputStream;
  */
 public class ConnectedThread extends Thread {
     private static final String TAG = ConnectedThread.class.getName();
+
+    public static final byte SERVER_SEND_LIST_OF_TRACKS = 10;
+    public static final byte SERVER_SEND_STREAM_TRACK = 50;
+    public static final byte CLIENT_SEND_PLAY_TRACK = 100;
+
     private final BluetoothSocket mmSocket;
     private final InputStream mmInStream;
     private final OutputStream mmOutStream;
@@ -39,7 +49,8 @@ public class ConnectedThread extends Thread {
     }
 
     public void run() {
-        byte[] buffer = new byte[1024];  // buffer store for the stream
+        int SIZE = StreamAudioHelper.BUF_SIZE + 1;
+        byte[] buffer = new byte[SIZE];  // buffer store for the stream
         int bytes; // bytes returned from read()
 
         // Keep listening to the InputStream until an exception occurs
@@ -47,10 +58,38 @@ public class ConnectedThread extends Thread {
             try {
                 // Read from the InputStream
                 bytes = mmInStream.read(buffer);
-                // Send the obtained bytes to the UI activity
-                mHandler.obtainMessage(BboxBluetoothService.SOCKET_MESSAGE_READ, bytes, -1, buffer)
-                        .sendToTarget();
-            } catch (IOException e) {
+
+                if (bytes > 1) {
+                    byte operation = buffer[0];
+
+                    byte[] data = new byte[bytes - 1];
+
+                    for (int i = 0; i < bytes - 1; i++) {
+                        data[i] = buffer[i + 1];
+                    }
+
+                    Log.e(TAG, "Operation: " + operation + ", Bytes: " + bytes);
+                    switch (operation) {
+                        case ConnectedThread.SERVER_SEND_LIST_OF_TRACKS:
+                            mHandler.obtainMessage(BboxBluetoothService.CLIENT_RECEIVE_LIST_OF_TRACKS,
+                                    data).sendToTarget();
+                            break;
+
+                        case ConnectedThread.SERVER_SEND_STREAM_TRACK:
+                            mHandler.obtainMessage(BboxBluetoothService.CLIENT_RECEIVE_STREAM_TRACK,
+                                    bytes - 1, -1, data).sendToTarget();
+
+                            break;
+
+                        case ConnectedThread.CLIENT_SEND_PLAY_TRACK:
+                            mHandler.obtainMessage(BboxBluetoothService.SERVER_RECEIVE_PLAY_TRACK,
+                                    data).sendToTarget();
+
+                            break;
+                    }
+                }
+            } catch (Throwable e) {
+                Log.e(TAG, e.getMessage());
                 break;
             }
         }
@@ -62,8 +101,10 @@ public class ConnectedThread extends Thread {
     public void write(byte[] bytes) {
         try {
             mmOutStream.write(bytes);
+            //mmOutStream.flush();
         } catch (IOException e) {
         }
+
     }
 
     /**
@@ -76,7 +117,7 @@ public class ConnectedThread extends Thread {
         } catch (IOException e) {
         }
 
-        mHandler.obtainMessage(BboxBluetoothService.SOCKET_DISCONNECTED).sendToTarget();
+        mHandler.obtainMessage(BboxBluetoothService.SERVER_DETECTED_A_DISCONNECTION).sendToTarget();
 
         Log.e(TAG, "Socket closed.");
     }
