@@ -87,6 +87,8 @@ public class MainActivity extends RoboActivity {
 
         setupRecyclerView();
 
+        setupSwipeRefreshLayout();
+
         setupHandler();
 
         registerReceivers();
@@ -95,6 +97,15 @@ public class MainActivity extends RoboActivity {
         bindService(intent, mServiceConnection, Context.BIND_AUTO_CREATE);
 
         refreshPairedDevices();
+    }
+
+    private void setupSwipeRefreshLayout() {
+        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                refreshPairedDevices();
+            }
+        });
     }
 
     @Override
