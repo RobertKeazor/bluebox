@@ -1,4 +1,4 @@
-package com.mac.bluebox.bluetooth;
+package com.mac.bluebox.service;
 
 import android.content.ComponentName;
 import android.content.ServiceConnection;
@@ -10,7 +10,7 @@ import android.os.RemoteException;
 /**
  * Created by anyer on 6/28/15.
  */
-public class DetailActivityServiceConnection implements ServiceConnection{
+public class DetailActivityServiceConnection implements ServiceConnection {
     private IBinder service = null;
     boolean mIsServiceBounded = false;
     private Object device;
@@ -30,16 +30,16 @@ public class DetailActivityServiceConnection implements ServiceConnection{
 
 
     private void connectToServer() {
-        sendMessage(BboxBluetoothService.CONNECT_SOCKET);
+        sendMessage(BboxBluetoothService.CLIENT_CONNECT_TO_SERVER);
     }
 
     private void sendMessage(int what) {
         if (isServiceBounded()) {
             Messenger messenger = new Messenger(service);
-            Message msg =  Message.obtain(null, what);
+            Message msg = Message.obtain(null, what);
 
             switch (what) {
-                case BboxBluetoothService.CONNECT_SOCKET:
+                case BboxBluetoothService.CLIENT_CONNECT_TO_SERVER:
                     msg.obj = device;
                     break;
             }
@@ -53,7 +53,7 @@ public class DetailActivityServiceConnection implements ServiceConnection{
     }
 
     public void disconnectFromServer() {
-        sendMessage(BboxBluetoothService.DISCONNECT_SOCKET);
+        sendMessage(BboxBluetoothService.CLIENT_DISCONNECT_FROM_SERVER);
     }
 
     private boolean isServiceBounded() {
@@ -62,5 +62,18 @@ public class DetailActivityServiceConnection implements ServiceConnection{
 
     public void setDevice(Object device) {
         this.device = device;
+    }
+
+    public void playTrack(int index) {
+        if (isServiceBounded()) {
+            Messenger messenger = new Messenger(service);
+            Message msg = Message.obtain(null, BboxBluetoothService.CLIENT_SEND_PLAY_TRACK);
+            msg.obj = index;
+            try {
+                messenger.send(msg);
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+        }
     }
 }

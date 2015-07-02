@@ -5,6 +5,8 @@ import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
 import android.os.Handler;
 
+import com.mac.bluebox.service.BboxBluetoothService;
+
 import java.io.IOException;
 import java.util.UUID;
 
@@ -58,7 +60,7 @@ public class ConnectThread extends Thread {
 
     private void manageConnectedSocket(BluetoothSocket mmSocket) {
         ConnectedThread connectedThread = new ConnectedThread(mmSocket, mHandler);
-        mHandler.obtainMessage(BboxBluetoothService.SOCKET_CONNECTED, connectedThread).sendToTarget();
+        mHandler.obtainMessage(BboxBluetoothService.CLIENT_SOCKET_CONNECTED, connectedThread).sendToTarget();
     }
 
     /** Will cancel an in-progress connection, and close the socket */

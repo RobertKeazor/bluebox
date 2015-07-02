@@ -4,6 +4,8 @@ import android.bluetooth.BluetoothSocket;
 import android.os.Handler;
 import android.util.Log;
 
+import com.mac.bluebox.service.BboxBluetoothService;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -13,6 +15,11 @@ import java.io.OutputStream;
  */
 public class ConnectedThread extends Thread {
     private static final String TAG = ConnectedThread.class.getName();
+
+    public static final byte SERVER_SEND_LIST_OF_TRACKS = 10;
+    public static final byte SERVER_SEND_STREAM_TRACK = 50;
+    public static final byte CLIENT_SEND_PLAY_TRACK = 100;
+
     private final BluetoothSocket mmSocket;
     private final InputStream mmInStream;
     private final OutputStream mmOutStream;
@@ -47,9 +54,34 @@ public class ConnectedThread extends Thread {
             try {
                 // Read from the InputStream
                 bytes = mmInStream.read(buffer);
-                // Send the obtained bytes to the UI activity
-                mHandler.obtainMessage(BboxBluetoothService.SOCKET_MESSAGE_READ, bytes, -1, buffer)
-                        .sendToTarget();
+                byte[] data = new byte[bytes - 1];
+
+                for (int i = 0; i < bytes - 1; i++) {
+                    data[i] = buffer[i+1];
+                }
+
+                byte operation = buffer[0];
+
+                if (bytes > 1) {
+                    switch (operation) {
+                        case ConnectedThread.SERVER_SEND_LIST_OF_TRACKS:
+                            mHandler.obtainMessage(BboxBluetoothService.CLIENT_RECEIVE_LIST_OF_TRACKS,
+                                    bytes, -1, data).sendToTarget();
+                            break;
+
+                        case ConnectedThread.SERVER_SEND_STREAM_TRACK:
+                            mHandler.obtainMessage(BboxBluetoothService.CLIENT_RECEIVE_STREAM_TRACK,
+                                    bytes, -1, data).sendToTarget();
+
+                            break;
+
+                        case ConnectedThread.CLIENT_SEND_PLAY_TRACK:
+                            mHandler.obtainMessage(BboxBluetoothService.SERVER_RECEIVE_PLAY_TRACK,
+                                    bytes, -1, data).sendToTarget();
+
+                            break;
+                    }
+                }
             } catch (IOException e) {
                 break;
             }
@@ -76,7 +108,7 @@ public class ConnectedThread extends Thread {
         } catch (IOException e) {
         }
 
-        mHandler.obtainMessage(BboxBluetoothService.SOCKET_DISCONNECTED).sendToTarget();
+        mHandler.obtainMessage(BboxBluetoothService.SERVER_DETECTED_A_DISCONNECTION).sendToTarget();
 
         Log.e(TAG, "Socket closed.");
     }

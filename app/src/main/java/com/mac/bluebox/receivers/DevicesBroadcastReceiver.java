@@ -1,32 +1,34 @@
-package com.mac.bluebox.bluetooth;
+package com.mac.bluebox.receivers;
 
 import android.bluetooth.BluetoothDevice;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
 
-import com.mac.bluebox.MainActivity;
-import com.mac.bluebox.view.BboxDevicesRecyclerViewAdapter;
+import com.google.inject.Inject;
+import com.mac.bluebox.activity.MainActivity;
+import com.mac.bluebox.view.DevicesRecyclerViewAdapter;
 
 
 /**
  * Created by anyer on 6/26/15.
  */
-public class BboxDevicesBroadcastReceiver extends BroadcastReceiver {
-    private static final String TAG = BboxDevicesBroadcastReceiver.class.getName();
+public class DevicesBroadcastReceiver extends BroadcastReceiver {
+    @Inject
+    DevicesRecyclerViewAdapter adapter;
+
+    private static final String TAG = DevicesBroadcastReceiver.class.getName();
     public static final String SERVING = "SERVING";
     public static final String DEVICE_NAME = "DEVICE_NAME";
     public static final String STOP_SERVING = "STOP_SERVING";
 
-    private BboxDevicesRecyclerViewAdapter adapter;
+//    private DevicesRecyclerViewAdapter adapter;
     private Handler mHandler;
 
-    public BboxDevicesBroadcastReceiver(BboxDevicesRecyclerViewAdapter adapter) {
-        this.adapter = adapter;
-    }
+//    public DevicesBroadcastReceiver(DevicesRecyclerViewAdapter adapter) {
+//        this.adapter = adapter;
+//    }
 
     @Override
     public void onReceive(Context context, Intent intent) {
@@ -44,26 +46,25 @@ public class BboxDevicesBroadcastReceiver extends BroadcastReceiver {
             }
         }
 
-        if (BboxDevicesBroadcastReceiver.SERVING.equals(action) && mHandler != null) {
+        if (DevicesBroadcastReceiver.SERVING.equals(action) && mHandler != null) {
             adapter.getDevices().clear();
             adapter.notifyDataSetChanged();
 
-            String deviceName = intent.getStringExtra(BboxDevicesBroadcastReceiver.DEVICE_NAME);
+            String deviceName = intent.getStringExtra(DevicesBroadcastReceiver.DEVICE_NAME);
 
             mHandler.obtainMessage(MainActivity.UI_CHANGE_TO_SERVING, deviceName).sendToTarget();
         }
 
-        Log.e(TAG, "PUTA ACCION: " + action);
-        if (BboxDevicesBroadcastReceiver.STOP_SERVING.equals(action) && mHandler != null) {
+        if (DevicesBroadcastReceiver.STOP_SERVING.equals(action) && mHandler != null) {
             mHandler.obtainMessage(MainActivity.UI_CHANGE_TO_LIST_DEVICES).sendToTarget();
         }
     }
 
-    public BboxDevicesRecyclerViewAdapter getAdapter() {
+    public DevicesRecyclerViewAdapter getAdapter() {
         return adapter;
     }
 
-    public void setHandler(Handler handler) {
+    public void setup(Handler handler) {
         this.mHandler = handler;
     }
 }

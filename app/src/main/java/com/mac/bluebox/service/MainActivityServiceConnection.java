@@ -1,4 +1,4 @@
-package com.mac.bluebox.bluetooth;
+package com.mac.bluebox.service;
 
 import android.content.ComponentName;
 import android.content.ServiceConnection;
@@ -6,7 +6,6 @@ import android.os.IBinder;
 import android.os.Message;
 import android.os.Messenger;
 import android.os.RemoteException;
-import android.util.Log;
 
 /**
  * Created by anyer on 6/28/15.
@@ -21,8 +20,6 @@ public class MainActivityServiceConnection implements ServiceConnection{
         this.service = service;
         mIsServiceBounded = true;
 
-//        Log.e(TAG, "MainActivity is bonded to service.");
-
         turnOnBluetoothServer();
     }
 
@@ -32,11 +29,11 @@ public class MainActivityServiceConnection implements ServiceConnection{
     }
 
     public void turnOffBluetoothServer() {
-        sendMessage(BboxBluetoothService.TURN_OFF_BLUETOOTH_SERVER);
+        sendMessage(BboxBluetoothService.SERVER_TURN_OFF_BLUETOOTH);
     }
 
     private void turnOnBluetoothServer() {
-        sendMessage(BboxBluetoothService.TURN_ON_BLUETOOTH_SERVER);
+        sendMessage(BboxBluetoothService.SERVER_TURN_ON_BLUETOOTH);
     }
 
     private void sendMessage(int what) {

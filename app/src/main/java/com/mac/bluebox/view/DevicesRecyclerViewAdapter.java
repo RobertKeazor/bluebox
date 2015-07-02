@@ -11,7 +11,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.mac.bluebox.DetailsActivity;
+import com.mac.bluebox.activity.DetailsActivity;
 import com.mac.bluebox.R;
 
 import java.util.List;
@@ -19,15 +19,15 @@ import java.util.List;
 /**
  * Created by anyer on 6/26/15.
  */
-public class BboxDevicesRecyclerViewAdapter extends
-        RecyclerView.Adapter<BboxDevicesRecyclerViewAdapter.BboxRecyclerViewHolder> {
+public class DevicesRecyclerViewAdapter extends
+        RecyclerView.Adapter<DevicesRecyclerViewAdapter.BboxRecyclerViewHolder> {
 
     private static final String DEVICE_MAC = "DEVICE_MAC";
     private static final String DEVICE_NAME = "DEVICE_NAME";
     private List<BluetoothDevice> devices;
     private final Context context;
 
-    public BboxDevicesRecyclerViewAdapter(List<BluetoothDevice> devices, Context context) {
+    public DevicesRecyclerViewAdapter(List<BluetoothDevice> devices, Context context) {
         this.devices = devices;
         this.context = context;
     }
