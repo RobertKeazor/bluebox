@@ -21,7 +21,7 @@ public class PlayAudioHelper {
 
     public PlayAudioHelper() {
         track = new AudioTrack(AudioManager.STREAM_MUSIC,
-                StreamAudioHelper.SAMPLE_RATE, AudioFormat.CHANNEL_CONFIGURATION_MONO,
+                StreamAudioHelper.SAMPLE_RATE, AudioFormat.CHANNEL_OUT_MONO,
                 AudioFormat.ENCODING_PCM_16BIT, StreamAudioHelper.BUF_SIZE,
                 AudioTrack.MODE_STREAM);
 

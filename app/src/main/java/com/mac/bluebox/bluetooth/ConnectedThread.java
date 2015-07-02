@@ -101,7 +101,7 @@ public class ConnectedThread extends Thread {
     public void write(byte[] bytes) {
         try {
             mmOutStream.write(bytes);
-            //mmOutStream.flush();
+            mmOutStream.flush();
         } catch (IOException e) {
         }
 
