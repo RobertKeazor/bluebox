@@ -3,9 +3,8 @@ package com.mac.bluebox.bluetooth;
 import android.bluetooth.BluetoothSocket;
 import android.os.Handler;
 import android.util.Log;
-import android.util.Size;
 
-import com.mac.bluebox.helper.PlayAudioHelper;
+import com.mac.bluebox.helper.ArrayHelper;
 import com.mac.bluebox.helper.StreamAudioHelper;
 import com.mac.bluebox.service.BboxBluetoothService;
 
@@ -49,44 +48,32 @@ public class ConnectedThread extends Thread {
     }
 
     public void run() {
-        int SIZE = StreamAudioHelper.BUF_SIZE + 1;
+        int SIZE = 1024;
         byte[] buffer = new byte[SIZE];  // buffer store for the stream
         int bytes; // bytes returned from read()
 
         // Keep listening to the InputStream until an exception occurs
         while (!isInterrupted()) {
             try {
+                // buffer has the follow structure: code(byte),sizeOfDataPacket(4bytes),data(byte[])
                 // Read from the InputStream
                 bytes = mmInStream.read(buffer);
 
                 if (bytes > 1) {
-                    byte operation = buffer[0];
+//                    int unparsedBytes = bytes;
+//                    while (unparsedBytes > 0) {
+                        byte operation = ArrayHelper.decodeCommandPacket(buffer);
+                        int packetSize = ArrayHelper.decodeDataPacketSize(buffer);
+                        byte[] data = ArrayHelper.decodeDataPacket(buffer);
 
-                    byte[] data = new byte[bytes - 1];
+                        handlePacket(operation, data, packetSize);
 
-                    for (int i = 0; i < bytes - 1; i++) {
-                        data[i] = buffer[i + 1];
-                    }
+                        // 1 byte of command, 4 bytes of dataSize
+//                        unparsedBytes = bytes - packetSize;
+//                        bytes = unparsedBytes;
+//                    }
 
-                    Log.e(TAG, "Operation: " + operation + ", Bytes: " + bytes);
-                    switch (operation) {
-                        case ConnectedThread.SERVER_SEND_LIST_OF_TRACKS:
-                            mHandler.obtainMessage(BboxBluetoothService.CLIENT_RECEIVE_LIST_OF_TRACKS,
-                                    data).sendToTarget();
-                            break;
-
-                        case ConnectedThread.SERVER_SEND_STREAM_TRACK:
-                            mHandler.obtainMessage(BboxBluetoothService.CLIENT_RECEIVE_STREAM_TRACK,
-                                    bytes - 1, -1, data).sendToTarget();
-
-                            break;
-
-                        case ConnectedThread.CLIENT_SEND_PLAY_TRACK:
-                            mHandler.obtainMessage(BboxBluetoothService.SERVER_RECEIVE_PLAY_TRACK,
-                                    data).sendToTarget();
-
-                            break;
-                    }
+                    Log.e(TAG, "Operation: " + buffer[0] + ", Bytes: " + bytes + ", UNPARSED: " + (bytes - 5 - packetSize));
                 }
             } catch (Throwable e) {
                 Log.e(TAG, e.getMessage());
@@ -95,6 +82,28 @@ public class ConnectedThread extends Thread {
         }
 
         cancel();
+    }
+
+    private void handlePacket(byte operation, byte[] data, int packetSize) {
+        switch (operation) {
+            case ConnectedThread.SERVER_SEND_LIST_OF_TRACKS:
+                mHandler.obtainMessage(BboxBluetoothService.CLIENT_RECEIVE_LIST_OF_TRACKS,
+                        packetSize, -1, data).sendToTarget();
+                break;
+
+            case ConnectedThread.SERVER_SEND_STREAM_TRACK:
+                mHandler.obtainMessage(BboxBluetoothService.CLIENT_RECEIVE_STREAM_TRACK,
+                        packetSize, -1, data).sendToTarget();
+
+                break;
+
+            case ConnectedThread.CLIENT_SEND_PLAY_TRACK:
+                mHandler.obtainMessage(BboxBluetoothService.SERVER_RECEIVE_PLAY_TRACK,
+                        packetSize, -1, data).sendToTarget();
+
+                break;
+        }
+
     }
 
     /* Call this from the main activity to send data to the remote device */
@@ -125,4 +134,6 @@ public class ConnectedThread extends Thread {
     public String getDeviceName() {
         return mmSocket.getRemoteDevice().getName();
     }
+
+
 }

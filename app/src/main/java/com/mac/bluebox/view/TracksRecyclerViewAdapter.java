@@ -38,16 +38,15 @@ public class TracksRecyclerViewAdapter extends
     }
 
     @Override
-    public void onBindViewHolder(BboxRecyclerViewHolder bboxRecyclerViewHolder, int i) {
+    public void onBindViewHolder(BboxRecyclerViewHolder bboxRecyclerViewHolder, final int i) {
         final String track = tracks.get(i);
-        final int trackId = i;
 
         bboxRecyclerViewHolder.textViewDevice.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (activity != null) {
-                    activity.playTrack(trackId);
-                    Log.e(TAG, "TRACK ITEM CLICKED: " + trackId);
+                    activity.playTrack(track);
+                    Log.e(TAG, "TRACK ITEM CLICKED: " + track);
                 }
             }
         });
