@@ -164,7 +164,7 @@ public class ServiceMessagesHandler extends Handler {
                 }
                 String trackName = new String(trackNameBuffer);
 
-                //streamAudio.stream(getTrack(trackName), mClientConnectedThread);
+                streamAudio.stream(getTrack(trackName), mClientConnectedThread);
                 Log.e(TAG, "SERVER_RECEIVE_PLAY_TRACK ..." + trackName);
                 break;
 
@@ -268,7 +268,7 @@ public class ServiceMessagesHandler extends Handler {
                     MediaStore.Files.FileColumns.DISPLAY_NAME));
 
 
-            if (trackName.toLowerCase().equals(track)) {
+            if (trackName.toLowerCase().equals(track.toLowerCase())) {
                 String fileName = audioFiles.getString(audioFiles.getColumnIndex(
                         MediaStore.Audio.Media.DATA));
                 file = new File(fileName);
