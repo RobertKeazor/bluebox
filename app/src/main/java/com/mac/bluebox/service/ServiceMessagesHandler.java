@@ -152,9 +152,9 @@ public class ServiceMessagesHandler extends Handler {
 
             case BboxBluetoothService.SERVER_RECEIVE_PLAY_TRACK:
                 byte[] buffer = (byte[]) msg.obj;
-                int size = msg.arg1;
-                byte[] trackNameBuffer = new byte[size];
-                for (int i = 0; i < size; i++) {
+                int sizeBuffer = msg.arg1;
+                byte[] trackNameBuffer = new byte[sizeBuffer];
+                for (int i = 0; i < sizeBuffer; i++) {
                     trackNameBuffer[i] = buffer[i];
                 }
                 String trackName = new String(trackNameBuffer);
