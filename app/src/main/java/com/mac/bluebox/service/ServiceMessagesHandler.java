@@ -99,15 +99,20 @@ public class ServiceMessagesHandler extends Handler {
 
             case BboxBluetoothService.CLIENT_RECEIVE_LIST_OF_TRACKS:
                 int size = msg.arg1;
+                byte[] dataTracks = new byte[size];
                 byte[] bytes = (byte[]) msg.obj;
+                for (int i = 0; i < size; i++) {
+                    dataTracks[i] = bytes[i];
+                }
 
                 Intent intentTracksListDiscovered = new Intent();
                 intentTracksListDiscovered.setAction(TracksBroadcastReceiver.TRACKS_LIST_DISCOVERED);
                 intentTracksListDiscovered.putExtra(TracksBroadcastReceiver.EXTRA_TRACKS,
-                        new String(bytes));
+                        new String(dataTracks));
+
                 mContext.sendBroadcast(intentTracksListDiscovered);
 
-                Log.e(TAG, "CLIENT_RECEIVE_LIST_OF_TRACKS:" + bytes.length);
+                Log.e(TAG, "CLIENT_RECEIVE_LIST_OF_TRACKS:" + size);
                 break;
 
 
@@ -159,7 +164,7 @@ public class ServiceMessagesHandler extends Handler {
                 }
                 String trackName = new String(trackNameBuffer);
 
-                streamAudio.stream(getTrack(trackName), mClientConnectedThread);
+                //streamAudio.stream(getTrack(trackName), mClientConnectedThread);
                 Log.e(TAG, "SERVER_RECEIVE_PLAY_TRACK ..." + trackName);
                 break;
 
