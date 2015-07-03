@@ -84,7 +84,7 @@ public class ServiceMessagesHandler extends Handler {
 
                 streamAudio = new StreamAudioHelper();
 
-                Log.e(TAG, "SERVER_HAS_A_NEW_CLIENT_CONNECTED ...");
+                Log.e(TAG, "SERVER_HAS_A_NEW_CLIENT_CONNECTED ..." + tracks.length);
                 break;
 
 
@@ -98,6 +98,7 @@ public class ServiceMessagesHandler extends Handler {
                 break;
 
             case BboxBluetoothService.CLIENT_RECEIVE_LIST_OF_TRACKS:
+                int size = msg.arg1;
                 byte[] bytes = (byte[]) msg.obj;
 
                 Intent intentTracksListDiscovered = new Intent();
@@ -106,7 +107,7 @@ public class ServiceMessagesHandler extends Handler {
                         new String(bytes));
                 mContext.sendBroadcast(intentTracksListDiscovered);
 
-                Log.e(TAG, "CLIENT_RECEIVE_LIST_OF_TRACKS:");
+                Log.e(TAG, "CLIENT_RECEIVE_LIST_OF_TRACKS:" + bytes.length);
                 break;
 
 

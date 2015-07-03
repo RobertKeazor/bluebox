@@ -51,7 +51,7 @@ public class TracksRecyclerViewAdapter extends
             }
         });
 
-        bboxRecyclerViewHolder.textViewDevice.setText(track);
+        bboxRecyclerViewHolder.textViewDevice.setText(track + ":" + track.length());
     }
 
     @Override

@@ -48,7 +48,7 @@ public class ConnectedThread extends Thread {
     }
 
     public void run() {
-        int SIZE = 1024;
+        int SIZE = 805;
         byte[] buffer = new byte[SIZE];  // buffer store for the stream
         int bytes; // bytes returned from read()
 
