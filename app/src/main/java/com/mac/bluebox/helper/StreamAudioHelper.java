@@ -19,8 +19,6 @@ public class StreamAudioHelper {
 
     public static final int SAMPLE_RATE = 8000;
     public static final int SAMPLE_INTERVAL = 20; // milliseconds
-    public static final int SAMPLE_SIZE = 2; // bytes per sample
-//    public static final int BUF_SIZE = SAMPLE_INTERVAL * SAMPLE_INTERVAL * SAMPLE_SIZE * 2;
     public static final int BUF_SIZE = 800;
 
     public void stream(File audio, ConnectedThread connectedThread) {

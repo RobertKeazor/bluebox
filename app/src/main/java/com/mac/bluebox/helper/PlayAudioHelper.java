@@ -1,15 +1,8 @@
 package com.mac.bluebox.helper;
 
-import android.bluetooth.BluetoothSocket;
 import android.media.AudioFormat;
 import android.media.AudioManager;
 import android.media.AudioTrack;
-import android.util.Log;
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.net.SocketException;
 
 /**
  * Created by anyer on 7/1/15.
@@ -28,8 +21,7 @@ public class PlayAudioHelper {
         track.play();
     }
 
-    public void play(byte[] bytes, int length)
-    {
+    public void play(byte[] bytes, int length) {
         track.write(bytes, 0, length);
     }
 }
