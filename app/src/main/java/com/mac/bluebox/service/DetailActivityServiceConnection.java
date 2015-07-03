@@ -64,11 +64,11 @@ public class DetailActivityServiceConnection implements ServiceConnection {
         this.device = device;
     }
 
-    public void playTrack(int index) {
+    public void playTrack(String track) {
         if (isServiceBounded()) {
             Messenger messenger = new Messenger(service);
             Message msg = Message.obtain(null, BboxBluetoothService.CLIENT_SEND_PLAY_TRACK);
-            msg.obj = index;
+            msg.obj = track;
             try {
                 messenger.send(msg);
             } catch (RemoteException e) {

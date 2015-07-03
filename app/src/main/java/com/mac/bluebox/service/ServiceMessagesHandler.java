@@ -68,17 +68,12 @@ public class ServiceMessagesHandler extends Handler {
                 List<String> musicFiles = readMusicFiles();
                 String join = ArrayHelper.joinStringByComma(musicFiles);
 
-                byte[] joinBytes = join.getBytes();
-                byte[] tmpBytes = new byte[joinBytes.length + 1];
-
-                tmpBytes[0] = ConnectedThread.SERVER_SEND_LIST_OF_TRACKS;
-                for (int i = 1; i < tmpBytes.length; i++) {
-                    tmpBytes[i] = joinBytes[i - 1];
-                }
+                byte[] tracks = ArrayHelper.encodePacket(ConnectedThread.SERVER_SEND_LIST_OF_TRACKS,
+                        join.getBytes(), join.getBytes().length);
 
                 stopClientConnectedThread();
                 mClientConnectedThread = (ConnectedThread) msg.obj;
-                mClientConnectedThread.write(tmpBytes);
+                mClientConnectedThread.write(tracks);
 
                 Intent intentServing = new Intent();
                 intentServing.setAction(DevicesBroadcastReceiver.SERVING);
@@ -106,8 +101,7 @@ public class ServiceMessagesHandler extends Handler {
                 byte[] bytes = (byte[]) msg.obj;
 
                 Intent intentTracksListDiscovered = new Intent();
-                intentTracksListDiscovered.setAction(
-                        TracksBroadcastReceiver.TRACKS_LIST_DISCOVERED);
+                intentTracksListDiscovered.setAction(TracksBroadcastReceiver.TRACKS_LIST_DISCOVERED);
                 intentTracksListDiscovered.putExtra(TracksBroadcastReceiver.EXTRA_TRACKS,
                         new String(bytes));
                 mContext.sendBroadcast(intentTracksListDiscovered);
@@ -156,16 +150,26 @@ public class ServiceMessagesHandler extends Handler {
                 break;
 
             case BboxBluetoothService.SERVER_RECEIVE_PLAY_TRACK:
-                String trackID = new String((byte[]) msg.obj);
+                byte[] buffer = (byte[]) msg.obj;
+                int size = msg.arg1;
+                byte[] trackNameBuffer = new byte[size];
+                for (int i = 0; i < size; i++) {
+                    trackNameBuffer[i] = buffer[i];
+                }
+                String trackName = new String(trackNameBuffer);
 
-                streamAudio.stream(getTrack(), mClientConnectedThread);
-                Log.e(TAG, "SERVER_RECEIVE_PLAY_TRACK ...");
+                streamAudio.stream(getTrack(trackName), mClientConnectedThread);
+                Log.e(TAG, "SERVER_RECEIVE_PLAY_TRACK ..." + trackName);
                 break;
 
             case BboxBluetoothService.CLIENT_SEND_PLAY_TRACK:
-                mConnectedThread.write(new byte[]{ConnectedThread.CLIENT_SEND_PLAY_TRACK, 1});
+                String trackString = (String)msg.obj;
+                byte[] trackBuffer = trackString.getBytes();
+                byte[] data = ArrayHelper.encodePacket(ConnectedThread.CLIENT_SEND_PLAY_TRACK,
+                        trackBuffer, trackBuffer.length);
+                mConnectedThread.write(data);
 
-                Log.e(TAG, "CLIENT_SEND_PLAY_TRACK ...");
+                Log.e(TAG, "CLIENT_SEND_PLAY_TRACK ..." + trackBuffer.length);
                 break;
 
             default:
@@ -226,13 +230,15 @@ public class ServiceMessagesHandler extends Handler {
             String trackName = audioFiles.getString(audioFiles.getColumnIndex(
                     MediaStore.Files.FileColumns.DISPLAY_NAME));
 
-            tracks.add(trackName);
+            if (trackName.toLowerCase().endsWith(".wav")){
+                tracks.add(trackName);
+            }
         }
 
         return tracks;
     }
 
-    private File getTrack() {
+    private File getTrack(String track) {
         ContentResolver cr = mContext.getContentResolver();
         Uri uri = MediaStore.Files.getContentUri("external");
 
@@ -256,7 +262,7 @@ public class ServiceMessagesHandler extends Handler {
                     MediaStore.Files.FileColumns.DISPLAY_NAME));
 
 
-            if (trackName.toLowerCase().equals("1.wav")) {
+            if (trackName.toLowerCase().equals(track)) {
                 String fileName = audioFiles.getString(audioFiles.getColumnIndex(
                         MediaStore.Audio.Media.DATA));
                 file = new File(fileName);

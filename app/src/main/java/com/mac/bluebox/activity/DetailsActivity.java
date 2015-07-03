@@ -69,8 +69,8 @@ public class DetailsActivity extends RoboActivity {
         unregisterReceiver(mBroadcastReceiver);
     }
 
-    public void playTrack(int trackId) {
-        mServiceConnection.playTrack(trackId);
+    public void playTrack(String track) {
+        mServiceConnection.playTrack(track);
     }
 
     private void setupRecyclerViewAdapter() {
