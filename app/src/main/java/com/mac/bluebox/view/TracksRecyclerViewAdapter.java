@@ -32,7 +32,7 @@ public class TracksRecyclerViewAdapter extends
     @Override
     public BboxRecyclerViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
         View itemView = LayoutInflater.from(viewGroup.getContext())
-                .inflate(R.layout.card_view, viewGroup, false);
+                .inflate(R.layout.list_item, viewGroup, false);
 
         return new BboxRecyclerViewHolder(itemView);
     }
@@ -73,7 +73,7 @@ public class TracksRecyclerViewAdapter extends
         public BboxRecyclerViewHolder(View v) {
             super(v);
 
-            textViewDevice =  (TextView) v.findViewById(R.id.card_view_textview_device);
+            textViewDevice =  (TextView) v.findViewById(R.id.list_view_textview_device);
             textViewDevice.setClickable(true);
         }
     }
