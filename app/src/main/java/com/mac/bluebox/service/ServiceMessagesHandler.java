@@ -17,8 +17,8 @@ import com.mac.bluebox.helper.ArrayHelper;
 import com.mac.bluebox.bluetooth.ConnectThread;
 import com.mac.bluebox.bluetooth.ConnectedThread;
 import com.mac.bluebox.bluetooth.ServerThread;
-import com.mac.bluebox.helper.PlayAudioHelper;
-import com.mac.bluebox.helper.StreamAudioHelper;
+import com.mac.bluebox.helper.PlayAudioThread;
+import com.mac.bluebox.helper.StreamAudioThread;
 import com.mac.bluebox.receivers.DevicesBroadcastReceiver;
 import com.mac.bluebox.receivers.TracksBroadcastReceiver;
 
@@ -41,8 +41,8 @@ public class ServiceMessagesHandler extends Handler {
     private ConnectThread mConnectingThread = null;
     private ConnectedThread mConnectedThread = null;
     private ConnectedThread mClientConnectedThread = null;
-    PlayAudioHelper playAudio = new PlayAudioHelper();
-    StreamAudioHelper streamAudio;
+    PlayAudioThread playAudioThread;
+    StreamAudioThread streamAudio;
 
     @Override
     public void handleMessage(Message msg) {
@@ -82,7 +82,8 @@ public class ServiceMessagesHandler extends Handler {
 
                 mContext.sendBroadcast(intentServing);
 
-                streamAudio = new StreamAudioHelper();
+                streamAudio = new StreamAudioThread();
+                streamAudio.start();
 
                 Log.e(TAG, "SERVER_HAS_A_NEW_CLIENT_CONNECTED ..." + tracks.length);
                 break;
@@ -148,7 +149,7 @@ public class ServiceMessagesHandler extends Handler {
                     byte[] stream = (byte[]) msg.obj;
 
                     if (stream != null) {
-                        playAudio.play(stream, msg.arg1);
+                        playAudioThread.write(stream, msg.arg1);
                     }
                 }
 
@@ -175,6 +176,9 @@ public class ServiceMessagesHandler extends Handler {
                         trackBuffer, trackBuffer.length);
                 mConnectedThread.write(data);
 
+
+                playAudioThread = new PlayAudioThread();
+                playAudioThread.start();
                 Log.e(TAG, "CLIENT_SEND_PLAY_TRACK ..." + trackBuffer.length);
                 break;
 
