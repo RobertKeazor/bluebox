@@ -5,7 +5,6 @@ import android.os.Handler;
 import android.util.Log;
 
 import com.mac.bluebox.helper.ArrayHelper;
-import com.mac.bluebox.helper.StreamAudioHelper;
 import com.mac.bluebox.service.BboxBluetoothService;
 
 import java.io.IOException;

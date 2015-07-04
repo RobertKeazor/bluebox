@@ -67,12 +67,12 @@ public class BboxBluetoothService extends RoboService {
     public static final int CLIENT_RECEIVE_STREAM_TRACK = 9;
 
     /**
-     * Server receives a request to play a track.
+     * Server receives a request to write a track.
      */
     public static final int SERVER_RECEIVE_PLAY_TRACK = 10;
 
     /**
-     * The client App requests to play a track.
+     * The client App requests to write a track.
      */
     public static final int CLIENT_SEND_PLAY_TRACK = 11;
 
