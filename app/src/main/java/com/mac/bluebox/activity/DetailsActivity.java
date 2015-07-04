@@ -16,6 +16,7 @@ import com.mac.bluebox.service.DetailActivityServiceConnection;
 import com.mac.bluebox.view.TracksRecyclerViewAdapter;
 
 import roboguice.activity.RoboActivity;
+import roboguice.activity.RoboListActivity;
 import roboguice.inject.ContentView;
 import roboguice.inject.InjectView;
 

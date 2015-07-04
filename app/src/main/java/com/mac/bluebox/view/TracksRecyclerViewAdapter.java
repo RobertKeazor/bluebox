@@ -6,6 +6,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.mac.bluebox.activity.DetailsActivity;
@@ -41,7 +42,7 @@ public class TracksRecyclerViewAdapter extends
     public void onBindViewHolder(BboxRecyclerViewHolder bboxRecyclerViewHolder, final int i) {
         final String track = tracks.get(i);
 
-        bboxRecyclerViewHolder.textViewDevice.setOnClickListener(new View.OnClickListener() {
+        bboxRecyclerViewHolder.imageViewDevice.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (activity != null) {
@@ -68,13 +69,15 @@ public class TracksRecyclerViewAdapter extends
     }
 
     public static class BboxRecyclerViewHolder extends RecyclerView.ViewHolder {
+        protected ImageView imageViewDevice;
         protected TextView textViewDevice;
 
         public BboxRecyclerViewHolder(View v) {
             super(v);
 
-            textViewDevice =  (TextView) v.findViewById(R.id.list_view_textview_device);
-            textViewDevice.setClickable(true);
+            imageViewDevice =  (ImageView) v.findViewById(R.id.list_view_play_button);
+            imageViewDevice.setClickable(true);
+            textViewDevice = (TextView) v.findViewById(R.id.list_view_textview_device);
         }
     }
 }
