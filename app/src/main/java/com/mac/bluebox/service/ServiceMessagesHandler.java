@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Handler;
+import android.os.Looper;
 import android.os.Message;
 import android.provider.MediaStore;
 import android.util.Log;
@@ -43,6 +44,12 @@ public class ServiceMessagesHandler extends Handler {
     private ConnectedThread mClientConnectedThread = null;
     PlayAudioThread playAudioThread;
     StreamAudioThread streamAudio;
+
+
+    public ServiceMessagesHandler() {
+        playAudioThread = new PlayAudioThread();
+        playAudioThread.start();
+    }
 
     @Override
     public void handleMessage(Message msg) {
@@ -81,9 +88,6 @@ public class ServiceMessagesHandler extends Handler {
                         ((ConnectedThread) msg.obj).getDeviceName());
 
                 mContext.sendBroadcast(intentServing);
-
-                streamAudio = new StreamAudioThread();
-                streamAudio.start();
 
                 Log.e(TAG, "SERVER_HAS_A_NEW_CLIENT_CONNECTED ..." + tracks.length);
                 break;
@@ -149,7 +153,8 @@ public class ServiceMessagesHandler extends Handler {
                     byte[] stream = (byte[]) msg.obj;
 
                     if (stream != null) {
-                        playAudioThread.write(stream, msg.arg1);
+                        playAudioThread.handler.obtainMessage(PlayAudioThread.WRITE, msg.arg1,
+                                -1, stream).sendToTarget();
                     }
                 }
 
@@ -166,20 +171,25 @@ public class ServiceMessagesHandler extends Handler {
                 }
                 String trackName = new String(trackNameBuffer);
 
-                streamAudio.stream(getTrack(trackName), mClientConnectedThread);
+                streamAudio = new StreamAudioThread(getTrack(trackName), mClientConnectedThread);
+                streamAudio.start();
+
                 Log.e(TAG, "SERVER_RECEIVE_PLAY_TRACK ..." + trackName);
                 break;
 
             case BboxBluetoothService.CLIENT_SEND_PLAY_TRACK:
-                String trackString = (String)msg.obj;
+                String trackString = (String) msg.obj;
                 byte[] trackBuffer = trackString.getBytes();
                 byte[] data = ArrayHelper.encodePacket(ConnectedThread.CLIENT_SEND_PLAY_TRACK,
                         trackBuffer, trackBuffer.length);
                 mConnectedThread.write(data);
 
 
-                playAudioThread = new PlayAudioThread();
-                playAudioThread.start();
+                Message message = Message.obtain();
+                message.what = PlayAudioThread.PLAY;
+                playAudioThread.handler.sendMessage(message);
+                //playAudioThread.getHandler().obtainMessage(PlayAudioThread.PLAY).sendToTarget();
+
                 Log.e(TAG, "CLIENT_SEND_PLAY_TRACK ..." + trackBuffer.length);
                 break;
 
@@ -241,7 +251,7 @@ public class ServiceMessagesHandler extends Handler {
             String trackName = audioFiles.getString(audioFiles.getColumnIndex(
                     MediaStore.Files.FileColumns.DISPLAY_NAME));
 
-            if (trackName.toLowerCase().endsWith(".wav")){
+            if (trackName.toLowerCase().endsWith(".wav")) {
                 tracks.add(trackName);
             }
         }

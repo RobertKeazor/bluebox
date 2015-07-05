@@ -3,14 +3,20 @@ package com.mac.bluebox.helper;
 import android.media.AudioFormat;
 import android.media.AudioManager;
 import android.media.AudioTrack;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
 
 /**
  * Created by anyer on 7/1/15.
  */
 public class PlayAudioThread extends Thread{
     static final String LOG_TAG = PlayAudioThread.class.getName();
+    public static final int PLAY = 1;
+    public static final int WRITE = 2;
 
     private final AudioTrack track;
+    public PlayAudioHandler handler;
 
     public PlayAudioThread() {
         track = new AudioTrack(AudioManager.STREAM_MUSIC,
@@ -21,20 +27,29 @@ public class PlayAudioThread extends Thread{
 
     @Override
     public void run() {
-        while (!isInterrupted()) {
-            try {
-                Thread.sleep(StreamAudioThread.SAMPLE_INTERVAL);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+        Looper.prepare();
+
+        handler = new PlayAudioHandler();
+
+        Looper.loop();
+    }
+
+    public class PlayAudioHandler extends Handler{
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what) {
+                case PlayAudioThread.PLAY:
+                    track.play();
+
+                    break;
+
+                case PlayAudioThread.WRITE:
+                    byte[] bytes = (byte[]) msg.obj;
+                    int length = msg.arg1;
+                    track.write(bytes, 0, length);
+
+                    break;
             }
         }
-    }
-
-    public void play() {
-        track.play();
-    }
-
-    public void write(byte[] bytes, int length) {
-        track.write(bytes, 0, length);
     }
 }

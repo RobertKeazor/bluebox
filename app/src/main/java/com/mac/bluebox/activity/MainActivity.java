@@ -32,6 +32,12 @@ public class MainActivity extends RoboActivity {
     @InjectView(R.id.activity_main_textView_message)
     TextView mTextViewMessage;
 
+    @InjectView(R.id.activity_main_swipe_refresh_layout)
+    SwipeRefreshLayout mSwipeRefreshLayout;
+
+    @InjectView(R.id.activity_main_recyclerview)
+    RecyclerView mRecyclerView;
+
     @Inject
     DevicesBroadcastReceiver mBroadcastReceiver;
 
@@ -47,12 +53,6 @@ public class MainActivity extends RoboActivity {
     @Inject
     MainActivityHandler mHandler;
 
-    @InjectView(R.id.activity_main_swipe_refresh_layout)
-    SwipeRefreshLayout mSwipeRefreshLayout;
-
-    @InjectView(R.id.activity_main_recyclerview)
-    RecyclerView mRecyclerView;
-
     public static final int UI_CHANGE_TO_SERVING = 1;
     public static final int UI_CHANGE_TO_LIST_DEVICES = 2;
     private static final int REQUEST_ENABLE_BT = 1;
@@ -61,22 +61,9 @@ public class MainActivity extends RoboActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        enableBluetooth();
 
         setupActionBar();
-
-        enableBluetooth();
-    }
-
-    private void setupActionBar() {
-        ActionBar actionBar = getActionBar();
-        actionBar.setDisplayShowHomeEnabled(false);
-        actionBar.setDisplayShowTitleEnabled(false);
-        LayoutInflater lInflater = LayoutInflater.from(this);
-        View customActionBarView = lInflater.inflate(R.layout.action_bar_layout, null);
-        TextView mTitleTextView = (TextView) customActionBarView.findViewById(R.id.title_text);
-        mTitleTextView.setText("BlueBox");
-        actionBar.setCustomView(customActionBarView);
-        actionBar.setDisplayShowCustomEnabled(true);
     }
 
     @Override
@@ -163,5 +150,17 @@ public class MainActivity extends RoboActivity {
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         mRecyclerView.setLayoutManager(linearLayoutManager);
         mRecyclerView.setAdapter(mDevicesRecyclerViewAdapter);
+    }
+
+    private void setupActionBar() {
+        ActionBar actionBar = getActionBar();
+        actionBar.setDisplayShowHomeEnabled(false);
+        actionBar.setDisplayShowTitleEnabled(false);
+        LayoutInflater lInflater = LayoutInflater.from(this);
+        View customActionBarView = lInflater.inflate(R.layout.action_bar_layout, null);
+        TextView mTitleTextView = (TextView) customActionBarView.findViewById(R.id.title_text);
+        mTitleTextView.setText("BlueBox");
+        actionBar.setCustomView(customActionBarView);
+        actionBar.setDisplayShowCustomEnabled(true);
     }
 }
